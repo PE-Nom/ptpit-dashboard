@@ -7,23 +7,23 @@
       <slide :right='false'>
         <a  @click='menuselected("issues")'>
           <i class="fa fa-fw fa-star-o"></i>
-          <span>指摘一覧</span>
+          <span>Issues</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-bell-o"></i>
-          <span>製品情報</span>
+          <span>Products</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-envelope-o"></i>
-          <span>顧客情報</span>
+          <span>Customer</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-comment-o"></i>
-          <span>ユーザー管理</span>
+          <span>Users</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-bar-chart-o"></i>
-          <span>統計分析</span>
+          <span>Analysis</span>
         </a>
       </slide>
       <b-navbar-brand class="title" to="/">ピットさん (version:{{version}})</b-navbar-brand>
