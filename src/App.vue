@@ -45,10 +45,11 @@
 </template>
 
 <script>
-import { Slide } from 'vue-burger-menu' // import the CSS transitions you wish to use, in this case we are using `Slide`
+import Slide from '@/components/slide.vue'
 import LoginDialog from '@/components/LoginDialog.vue'
 import LogoutDialog from '@/components/LogoutDialog.vue'
 import config from './config.js'
+import naim from './models/naim.js'
 
 export default {
   name: 'App',
@@ -72,11 +73,17 @@ export default {
     logout () {
       this.showLogoutDialog = true
     },
-    loginClose (user) {
+    async loginClose (user) {
       console.log('## login@App.vue')
       console.log(user)
       this.user = user
       this.showLoginDialog = false
+      try {
+        await naim.initialize(this.user)
+      } catch (err) {
+        console.log('==== App ====')
+        console.log(err)
+      }
       this.$router.push('/')
     },
     logoutClose () {
@@ -107,22 +114,6 @@ export default {
   color: #2c3e50;
   /* margin-top: 60px; */
 }
-.bm-burger-button {
-  position: relative;
-  width: 36px;
-  height: 30px;
-  left: 0px;
-  top: 0px;
-  cursor: pointer;
-  float: left;
-}
-.bm-burger-bars {
-  background-color: #fff;
-}
-.bm-menu {
-  left: 0px;
-  right: auto;
-}
 .title {
   color: #fff;
   margin-left: 1em;
@@ -130,12 +121,12 @@ export default {
 }
 .login {
   color: #fff;
-  margin-left: 1em;
+  margin-left: auto;
   margin-right: 1em;
 }
 .logout {
   color: #fff;
-  margin-left: 1em;
+  margin-left: auto;
   margin-right: 1em;
 }
 </style>
