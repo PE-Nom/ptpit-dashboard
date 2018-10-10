@@ -4,26 +4,26 @@
       <b-navbar toggleable="md" type="dark" variant="success">
       <!--
       <div :is="currentMenu" :right="side === 'right' ? true: false" title=> -->
-      <slide :right='false'>
+      <slide>
         <a  @click='menuselected("issues")'>
           <i class="fa fa-fw fa-star-o"></i>
-          <span>Issues</span>
+          <span>指摘一覧</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-bell-o"></i>
-          <span>Products</span>
+          <span>製品一覧</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-envelope-o"></i>
-          <span>Customer</span>
+          <span>顧客情報</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-comment-o"></i>
-          <span>Users</span>
+          <span>ユーザー管理</span>
         </a>
         <a @click='menuselected("issues")'>
           <i class="fa fa-fw fa-bar-chart-o"></i>
-          <span>Analysis</span>
+          <span>統計分析</span>
         </a>
       </slide>
       <b-navbar-brand class="title" to="/">ピットさん (version:{{version}})</b-navbar-brand>
