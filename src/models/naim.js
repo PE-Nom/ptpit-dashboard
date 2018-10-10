@@ -35,6 +35,9 @@ export default {
       //
       await this.retrievePojects()
       await this.retrieveMembershipOfProjects()
+      console.log('=====project filter')
+      let projects = this.getProjects()
+      console.log(projects)
       await this.retrieveIssues()
       //
       await this.retrieveTimeEntryActivities()
@@ -207,9 +210,6 @@ export default {
       throw err
     }
   },
-  getProjects () {
-    return util.convertOptionObjs(this.projects, 'name')
-  },
   availablePrjs: [],
   async retrieveMembershipOfProjects () {
     try {
@@ -237,6 +237,24 @@ export default {
       console.log('==== Membership of project @ naim ====')
       console.log(err)
     }
+  },
+  getProjects () {
+    console.log('getProjects')
+    let projects = []
+    this.availablePrjs.forEach(availablePrj => {
+      console.log(availablePrj)
+      let proj = this.projects.find(prj => {
+        if (prj.parent !== undefined) {
+          return (prj.id === availablePrj.prjId)
+        }
+      })
+      if (proj !== undefined) {
+        projects.push(proj)
+      }
+    })
+    console.log(projects)
+    return util.convertOptionObjs(projects, 'name')
+    // return util.convertOptionObjs(this.projects, 'name')
   },
   createProject: async function (qstr) {
     try {
