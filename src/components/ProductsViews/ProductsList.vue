@@ -89,7 +89,7 @@ export default {
           supplier = element.custome_fields[0].value[0]
         }
         // 顧客の文字列生成
-        let customer = element.custom_fields[1].value
+        let customer = element.custom_fields[2].value
         // 説明欄の改行コードエスケープ
         let desc = String(element.description)
         desc = desc.replace(/(\r\n)/g, '\\\\n')
@@ -170,10 +170,10 @@ export default {
   .container-fluid{
     margin-right: auto;
     margin-left: auto;
-    padding-left: 0px;
-    padding-right: 0px;
-    width: 95%;
-    height: 35vh;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 100%;
+    height: 490px;
     /*
     border:rgba(63, 63, 63, 0.1) solid 1px;
     */
@@ -196,12 +196,12 @@ export default {
   }
   /* path indicator */
   .message-field {
-    line-height: 5vh;
+    line-height: 50px;
     text-align: left;
   }
   /* list header */
   .header-field {
-    height: 10vh;
+    height: 100px;
     /*
     display: block;
     font-size: 80%;
@@ -218,16 +218,8 @@ export default {
     font-weight: bold;
     */
   }
-  .wrapper.attributes.header {
-    height: 5vh;
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-top: 1.5vh;
-    font-weight: bold;
-  }
-
   .operation {
-    height: 5vh;
+    height: 50%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: row;
@@ -258,19 +250,26 @@ export default {
   .flex-inner-item {
     float: left;
   }
+  .wrapper.attributes.header {
+    height: 50%;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-top: 1.5vh;
+    font-weight: bold;
+  }
   /* list data */
   .data-field {
-    height: 20vh;
+    height: 340px;
     overflow-y: auto;
   }
   .table-row.data {
-    height: 100%;
+    height: 50px;
     width: 100%;
     padding-left: 6px;
     padding-right: 6px;
   }
   .wrapper.attributes.data {
-    height: 5vh;
+    height: 100%;
     margin-left: 0px;
     margin-right: 0px;
     padding-top: 6px;
@@ -299,7 +298,7 @@ export default {
     text-align: left;
   }
   .登録日時 {
-    width: 15vw;
+    width: 20vw;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
