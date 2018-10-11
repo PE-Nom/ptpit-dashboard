@@ -9,7 +9,7 @@
           <i class="fa fa-fw fa-star-o"></i>
           <span>指摘一覧</span>
         </a>
-        <a @click='menuselected("issues")'>
+        <a @click='menuselected("products")'>
           <i class="fa fa-fw fa-bell-o"></i>
           <span>製品一覧</span>
         </a>
@@ -31,7 +31,8 @@
       <div class="title">Pit-SAN (version:)</div>
       -->
       <div class="login" v-if='user === null' @click='login'>ログイン</div>
-      <div class="logout" v-else @click='logout'>ログアウト</div>
+      <div class="logout" v-else>
+        <span>ユーザー：{{user.username}}</span><span> | </span><span @click='logout'>ログアウト<spam></div>
       </b-navbar>
     </div>
     <LoginDialog v-if="showLoginDialog" @cancelClose="cancelClose" @loginClose="loginClose">
@@ -90,6 +91,7 @@ export default {
       console.log('## logout@App.vue')
       this.showLogoutDialog = false
       this.user = null
+      naim.finalize()
       this.$router.push('/')
     },
     cancelClose () {

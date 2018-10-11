@@ -5,6 +5,7 @@ import fileUploader from './fileUploader.js'
 export default {
 
   projects: [],
+  availablePrjs: [],
   customFields: [],
   issues: [],
   issueDetail: null,
@@ -17,7 +18,7 @@ export default {
   online: true,
   userId: null,
 
-  initialize: async function (user) {
+  async initialize (user) {
     console.log('initialize @ naim')
     redmine.configure(user)
     let resp
@@ -33,11 +34,8 @@ export default {
       await this.retrieveIssueStatuses()
       await this.retrieveIssuePriorities()
       //
-      await this.retrievePojects()
+      await this.retrieveProjects()
       await this.retrieveMembershipOfProjects()
-      console.log('=====project filter')
-      let projects = this.getProjects()
-      console.log(projects)
       await this.retrieveIssues()
       //
       await this.retrieveTimeEntryActivities()
@@ -46,7 +44,7 @@ export default {
       alert(err)
     }
   },
-  finalize: function () {
+  finalize () {
     this.clearProjects()
     this.clearIssues()
     this.clearCustomFileds()
@@ -188,7 +186,7 @@ export default {
   // ------------------
   // Projects data
   // ------------------
-  async retrievePojects () {
+  async retrieveProjects () {
     try {
       // Project List
       const prjs = []
@@ -210,52 +208,39 @@ export default {
       throw err
     }
   },
-  availablePrjs: [],
+  getProjects () {
+    console.log('getProjects')
+    return this.projects
+    // return util.convertOptionObjs(this.projects, 'name')
+  },
   async retrieveMembershipOfProjects () {
     try {
+      let prjs = []
       for (let prj of this.projects) {
         await redmine.membershipOfProject(prj.id, res => {
-          console.log('==== Membership of project @ naim ====')
+          // console.log('==== Membership of project @ naim ====')
           for (let membership of res.data.memberships) {
-            if (membership.user.id === this.userId) {
-              console.log('find userId')
-              let availablePrj = {
-                prjId: membership.project.id,
-                prjName: membership.project.name,
-                roleId: membership.roles[0].id,
-                roleName: membership.roles[0].name,
-                userId: membership.user.id,
-                userName: membership.user.name
-              }
-              this.availablePrjs.push(availablePrj)
+            if (membership.user.id === this.userId && prj.parent !== undefined) {
+              // console.log('find userId')
+              let availablePrj = Object.assign({}, prj)
+              Object.assign(availablePrj, {roles: membership.roles})
+              prjs.push(availablePrj)
+              // this.availablePrjs.push(availablePrj)
             }
           }
         })
       }
-      console.log(this.availablePrjs)
+      this.availablePrjs = prjs
+      // console.log(this.availablePrjs)
     } catch (err) {
       console.log('==== Membership of project @ naim ====')
       console.log(err)
     }
   },
-  getProjects () {
-    console.log('getProjects')
-    let projects = []
-    this.availablePrjs.forEach(availablePrj => {
-      console.log(availablePrj)
-      let proj = this.projects.find(prj => {
-        if (prj.parent !== undefined) {
-          return (prj.id === availablePrj.prjId)
-        }
-      })
-      if (proj !== undefined) {
-        projects.push(proj)
-      }
-    })
-    console.log(projects)
-    return util.convertOptionObjs(projects, 'name')
-    // return util.convertOptionObjs(this.projects, 'name')
+  getAvailableProjects () {
+    return this.availablePrjs
   },
+
   createProject: async function (qstr) {
     try {
       await redmine.createProject(qstr, res => {
@@ -286,8 +271,9 @@ export default {
       throw err
     }
   },
-  clearProjects: function () {
+  clearProjects () {
     this.projects = []
+    this.availablePrjs = []
   },
 
   // ------------------
