@@ -1,6 +1,5 @@
 <template>
   <div class="products">
-    <h1>{{ msg }}</h1>
     <ProductsList/>
   </div>
 </template>
@@ -12,11 +11,6 @@ export default {
   name: 'products',
   components: {
     ProductsList: ProductsList
-  },
-  data () {
-    return {
-      msg: 'Non Conforming Products List View'
-    }
   }
 }
 </script>

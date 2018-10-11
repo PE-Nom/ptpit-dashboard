@@ -1,5 +1,8 @@
 <template>
   <div class="container-fluid">
+    <div class="message-field">
+      {{message}}
+    </div>
     <div class="header-field">
       <div class="table-row header">
         <div class="operation">
@@ -62,7 +65,8 @@ export default {
       products: [],
       searchQuery: '',
       sortKey: 'キー',
-      sortOrders: sortOrders
+      sortOrders: sortOrders,
+      message: '不適合管理対象　製品情報'
     }
   },
   computed: {
@@ -169,7 +173,7 @@ export default {
     padding-left: 0px;
     padding-right: 0px;
     width: 95%;
-    height: 30vh;
+    height: 35vh;
     /*
     border:rgba(63, 63, 63, 0.1) solid 1px;
     */
@@ -189,6 +193,11 @@ export default {
   .table-row {
     border-bottom: 1px solid #e0e0e0;
     border-collapse: collapse;
+  }
+  /* path indicator */
+  .message-field {
+    line-height: 5vh;
+    text-align: left;
   }
   /* list header */
   .header-field {
