@@ -33,7 +33,7 @@ export default {
   margin-top: 6px;
   padding-left: 6px;
   padding-right: 6px;
-  height: 480px;
+  height: 400px;
   box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
   /*
   margin-right: auto;

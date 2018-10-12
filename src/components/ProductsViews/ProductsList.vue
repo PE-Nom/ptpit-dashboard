@@ -172,7 +172,7 @@ export default {
   .products-list{
     padding-left: 6px;
     padding-right: 6px;
-    height: 490px;
+    height: 400px;
     box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
     /*
     margin-right: auto;
@@ -261,7 +261,7 @@ export default {
   }
   /* list data */
   .data-field {
-    height: 340px;
+    height: 250px;
     overflow-y: auto;
   }
   .table-row.data {

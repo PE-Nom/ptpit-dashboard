@@ -34,7 +34,8 @@ export default {
 .products {
   margin-left: auto;
   margin-right: auto;
+  margin-top: 6px;
   width: 98%;
-  height: 990px;
+  height: 850px;
 }
 </style>
