@@ -75,21 +75,13 @@ export default {
       let ret = []
       // let prjs = naim.getAvailableProjects()
       this.products.forEach(element => {
-        // 調達先（複数指定可）の文字列生成
-        let supplier = ''
-        if (element.custom_fields[0].multiple) {
-          element.custom_fields[0].value.forEach(el => {
-            if (supplier.length === 0) {
-              supplier = el
-            } else {
-              supplier += ', ' + el
-            }
-          })
-        } else {
-          supplier = element.custome_fields[0].value[0]
-        }
         // 顧客の文字列生成
-        let customer = element.custom_fields[2].value
+        let customer = ''
+        element.custom_fields.forEach(field => {
+          if (field.name === '顧客情報') {
+            customer = field.value
+          }
+        })
         // 説明欄の改行コードエスケープ
         let desc = String(element.description)
         desc = desc.replace(/(\r\n)/g, '\\\\n')
