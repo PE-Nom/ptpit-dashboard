@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="products-list">
     <div class="message-field">
       {{message}}
     </div>
@@ -102,6 +102,7 @@ export default {
           ',"説明" : "' + desc + '"' +
           ' }'
         let obj = JSON.parse(rec)
+        obj = Object.assign(obj, {product: element})
         ret.push(obj)
       })
       let filterKey = this.searchQuery && this.searchQuery.toLowerCase()
@@ -136,6 +137,7 @@ export default {
     editProduct (product) {
       console.log('edit products')
       console.log(product)
+      this.$emit('editProduct', product.product)
     },
     createProduct () {
       console.log('create products')
@@ -167,17 +169,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .container-fluid{
-    margin-right: auto;
-    margin-left: auto;
+  .products-list{
     padding-left: 6px;
     padding-right: 6px;
-    width: 100%;
     height: 490px;
+    box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
     /*
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
     border:rgba(63, 63, 63, 0.1) solid 1px;
     */
-    box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
   }
   .wrapper {
     display: flex;

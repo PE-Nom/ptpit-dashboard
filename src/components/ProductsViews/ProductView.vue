@@ -1,16 +1,31 @@
 <template>
   <div class="products">
-    <ProductsList/>
+    <ProductsList @editProduct='editProduct'></ProductsList>
+    <ProductEdit :product="product"></ProductEdit>
   </div>
 </template>
 
 <script>
 import ProductsList from './ProductsList.vue'
+import ProductEdit from './ProductEdit.vue'
 
 export default {
   name: 'products',
   components: {
-    ProductsList: ProductsList
+    ProductsList: ProductsList,
+    ProductEdit: ProductEdit
+  },
+  data () {
+    return {
+      product: null
+    }
+  },
+  methods: {
+    editProduct (product) {
+      console.log('ProductView.editProduct')
+      console.log(product)
+      this.product = product
+    }
   }
 }
 </script>
@@ -19,7 +34,7 @@ export default {
 .products {
   margin-left: auto;
   margin-right: auto;
-  width: 100%;
-  height: 500px;
+  width: 98%;
+  height: 990px;
 }
 </style>

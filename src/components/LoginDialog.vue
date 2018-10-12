@@ -11,12 +11,10 @@
           <div class="modal-body">
 
             <div class="form-group">
-            <label for="username">Username</label>
             <input id="username" v-model="user.username" type="text" placeholder="Username">
             </div>
 
             <div class="form-group">
-            <label for="password">Password</label>
             <input id="password" v-model="user.password" type="password" placeholder="Password">
             </div>
             <p v-if=errorMessage class="message-field">{{errorMessage}}</p>
