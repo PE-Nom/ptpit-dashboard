@@ -15,7 +15,24 @@
           <label for="inputDescription" class="grid-item item-label product-desc-label">説明</label>
           <textarea class="grid-item item-form product-desc-form" rows="3" id="inputDescription" v-model="productDescription"></textarea>
       </div>
-      <div class="user-field">
+      <div class="userinfo-field">
+        <table class="user-info">
+          <caption class="user-info-caption">関係者リスト</caption>
+          <thead class="user-info-header">
+            <tr class="user-info-tr head">
+              <th class="user-info-th" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
+                {{val}}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="user-info-data">
+            <tr class="user-info-tr data" v-for="(entry,idx) in userInfo" v-bind:key=idx>
+              <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
+                {{entry[val]}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -43,15 +60,54 @@ export default {
     // }
   },
   data () {
+    let userInfoColumns = ['名前', '管理者', '報告者']
+    let userInfo = [
+      {'名前': '不適合管理　責任者1', '管理者': true, '報告者': true},
+      {'名前': '不適合管理　責任者2', '管理者': true, '報告者': true},
+      {'名前': '不適合管理　担当者1', '管理者': true, '報告者': true},
+      {'名前': '不適合管理　担当者2', '管理者': true, '報告者': true}
+    ]
     return {
       productName: '',
       productIdentifier: '',
       productDescription: '',
       customerOptions: [{value: '', text: ''}],
-      productCustomer: ''
+      productCustomer: '',
+      members: null,
+      users: null,
+      userInfoColumns: userInfoColumns,
+      userInfo: userInfo
     }
   },
   methods: {
+    setUserInfo () {
+      // userInfo の表示オブジェクト生成
+      let usersList = []
+      this.users.forEach(user => {
+        let manager = false
+        let reporter = false
+        for (let member of this.members) {
+          if (user.id === member.user.id) {
+            member.roles.forEach(role => {
+              if (role.name === '管理者') {
+                manager = true
+              } else if (role.name === '報告者') {
+                reporter = true
+              }
+            })
+            break
+          }
+        }
+        let userinfo = '{' +
+          ' "名前" : "' + user.firstname + ' ' + user.lastname + '"' +
+          ',"管理者" : "' + manager + '"' +
+          ',"報告者" : "' + reporter + '"' +
+        ' }'
+        let obj = JSON.parse(userinfo)
+        usersList.push(obj)
+      })
+      this.userInfo = usersList
+    },
     setData () {
       console.log('setData')
       console.log(this.product)
@@ -64,6 +120,11 @@ export default {
         })
         this.productDescription = this.product.description
         this.productIdentifier = this.product.identifier
+        this.users = naim.getUsers()
+        console.log(this.users)
+        this.members = naim.getProjectMemberships(this.product.id)
+        console.log(this.members)
+        this.setUserInfo()
       }
     }
   },
@@ -148,5 +209,38 @@ export default {
 }
 .product-desc-form {
   grid-area: item-desc-content;
+}
+/*
+ * ユーザー情報テーブル
+ */
+.userinfo-field {
+  padding-top: 6px;
+}
+.user-info-caption {
+  padding-top: 0px;
+  padding-bottom: 6px;
+  height: 30px;
+  caption-side: top;
+}
+thead, tbody {
+    display: block;
+}
+tbody {
+    overflow-y: scroll;
+    height: 280px;
+}
+.user-info-th {
+  height: 40px;
+  border: 1px solid #666
+}
+.user-info-td {
+  height: 30px;
+  border: 1px solid #666
+}
+.名前 {
+  width: 300px;
+}
+.管理者, .報告者 {
+  width: 60px;
 }
 </style>

@@ -103,6 +103,14 @@ export default {
       console.log('menuselected : ' + menu)
       this.$router.push(menu)
     }
+  },
+  created () {
+    console.log('app created')
+    let user = {
+      username: 'nc-manager-001',
+      password: 'nc-manager-001'
+    }
+    this.loginClose(user)
   }
 }
 </script>

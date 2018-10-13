@@ -5,6 +5,7 @@ import fileUploader from './fileUploader.js'
 export default {
 
   projects: [],
+  memberships: [],
   availablePrjs: [],
   customFields: [],
   issues: [],
@@ -26,7 +27,7 @@ export default {
       resp = await fileUploader.pingToServer()
       console.log('naim.initialize @ return from fileUploader.pingtoServer')
       console.log(resp)
-      alert(resp.data.dateandtime)
+      // alert(resp.data.dateandtime)
       //
       await this.retrieveUsers(user.username)
       await this.retrieveTrackers()
@@ -70,8 +71,8 @@ export default {
     }
   },
   getUsers () {
-    return util.convertUsersObjs(this.users)
-    // return this.users
+    // return util.convertUsersObjs(this.users)
+    return this.users
   },
   getUserId (userName) {
     let id = null
@@ -215,11 +216,13 @@ export default {
   },
   async retrieveMembershipOfProjects () {
     try {
+      this.memberships = []
       let prjs = []
       for (let prj of this.projects) {
         await redmine.membershipOfProject(prj.id, res => {
-          // console.log('==== Membership of project @ naim ====')
+          console.log('==== Membership of project @ naim ====')
           for (let membership of res.data.memberships) {
+            this.memberships.push(membership)
             if (membership.user.id === this.userId && prj.parent !== undefined) {
               // console.log('find userId')
               let availablePrj = Object.assign({}, prj)
@@ -230,6 +233,7 @@ export default {
           }
         })
       }
+      console.log(this.memberships)
       this.availablePrjs = prjs
       // console.log(this.availablePrjs)
     } catch (err) {
@@ -239,6 +243,17 @@ export default {
   },
   getAvailableProjects () {
     return this.availablePrjs
+  },
+  getProjectMemberships (id) {
+    console.log('getProjectMemberships id : ' + id)
+    let members = []
+    this.memberships.forEach(membership => {
+      // console.log(membership)
+      if (membership.project.id === id) {
+        members.push(membership)
+      }
+    })
+    return members
   },
 
   createProject: async function (qstr) {
