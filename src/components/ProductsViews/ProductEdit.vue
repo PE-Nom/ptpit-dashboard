@@ -28,7 +28,11 @@
           <tbody class="user-info-data">
             <tr class="user-info-tr data" v-for="(entry,idx) in userInfo" v-bind:key=idx>
               <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
-                {{entry[val]}}
+                <input type="checkbox" v-if="val==='管理者'" v-model="roleManager" v-bind:value="entry"/>
+                <input type="checkbox" v-else-if="val==='報告者'" v-model="roleReporter" v-bind:value="entry" />
+                <span v-else>
+                  {{entry[val]}}
+                </span>
               </td>
             </tr>
           </tbody>
@@ -76,13 +80,17 @@ export default {
       members: null,
       users: null,
       userInfoColumns: userInfoColumns,
-      userInfo: userInfo
+      userInfo: userInfo,
+      roleManager: [],
+      roleReporter: []
     }
   },
   methods: {
     setUserInfo () {
       // userInfo の表示オブジェクト生成
       let usersList = []
+      let roleManager = []
+      let roleReporter = []
       this.users.forEach(user => {
         let manager = false
         let reporter = false
@@ -99,13 +107,22 @@ export default {
           }
         }
         let userinfo = '{' +
-          ' "名前" : "' + user.firstname + ' ' + user.lastname + '"' +
+          ' "id" : "' + user.id + '"' +
+          ',"名前" : "' + user.firstname + ' ' + user.lastname + '"' +
           ',"管理者" : "' + manager + '"' +
           ',"報告者" : "' + reporter + '"' +
         ' }'
         let obj = JSON.parse(userinfo)
+        if (manager) {
+          roleManager.push(obj)
+        }
+        if (reporter) {
+          roleReporter.push(obj)
+        }
         usersList.push(obj)
       })
+      this.roleManager = roleManager
+      this.roleReporter = roleReporter
       this.userInfo = usersList
     },
     setData () {
