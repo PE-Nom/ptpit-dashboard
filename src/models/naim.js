@@ -266,7 +266,7 @@ export default {
       throw err
     }
   },
-  updateProject: async function (prjId, qstr) {
+  async updateProject (prjId, qstr) {
     try {
       await redmine.updateProject(prjId, qstr, res => {
         // console.log('==== Update Project @ naim ====')

@@ -1,7 +1,7 @@
 <template>
   <div class="products">
-    <ProductsList @editProduct='editProduct' @createProduct='createProduct'></ProductsList>
-    <ProductEdit :product="product"></ProductEdit>
+    <ProductsList :reloadrequest="reloadcount" @editProduct='editProduct' @createProduct='createProduct'></ProductsList>
+    <ProductEdit :product="product" @reloadRequest='reload'></ProductEdit>
   </div>
 </template>
 
@@ -17,7 +17,8 @@ export default {
   },
   data () {
     return {
-      product: null
+      product: null,
+      reloadcount: 0
     }
   },
   methods: {
@@ -42,6 +43,10 @@ export default {
         ]
       }
       this.product = product
+    },
+    reload () {
+      console.log('reload @ ProductView')
+      this.reloadcount++
     }
   }
 }

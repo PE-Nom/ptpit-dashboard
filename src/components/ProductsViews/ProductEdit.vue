@@ -32,7 +32,8 @@
             class="grid-item item-form product-number-form"
             placeholder="製品番号"
             v-model="productIdentifier"
-            v-bind:disabled="!(product && product.id === -1)">
+            v-bind:disabled="!(product && product.id === -1)"
+            @change="productIdentifierChanged">
           <!-- 客先 -->
           <label class="grid-item item-label product-customer-label">客先</label>
           <b-form-select class="grid-item item-form product-customer-form"
@@ -51,8 +52,6 @@
         </div>
       </div>
       <div class="userinfo-field">
-        <!--
-        -->
         <div class="users">
           <table class="user-info">
             <caption class="user-info-caption">関係者リスト</caption>
@@ -85,8 +84,6 @@
               </tr>
             </tbody>
           </table>
-        <!--
-        -->
         </div>
       </div>
     </div>
@@ -133,9 +130,33 @@ export default {
     }
   },
   methods: {
+    createQueryString () {
+      console.log('createQueryString')
+      let qstr = {
+        project: {
+          name: this.product.name,
+          identifier: this.product.ientifier,
+          description: this.product.description,
+          is_public: false,
+          custom_fields: this.product.custom_fields
+        }
+      }
+      return qstr
+    },
+    // 登録
+    createProductInfo () {
+      console.log('createProductInfo')
+    },
     // 更新
-    updateProductInfo () {
+    async updateProductInfo () {
       console.log('updateProductInfo')
+      try {
+        let query = this.createQueryString()
+        await naim.updateProject(this.product.id, query)
+        this.$emit('reloadRequest')
+      } catch (err) {
+        console.log(err)
+      }
     },
     // 編集フラグのセット
     setDuty () {
@@ -149,6 +170,14 @@ export default {
       this.$nextTick(function () {
         console.log('productNameChanged : this.product.name : ' + this.product.name + ', productName : ' + this.productName)
         this.product.name = this.productName
+        this.setDuty()
+      })
+    },
+    // 製品番号の更新（登録時のみ）
+    productIdentifierChanged () {
+      this.$nextTick(function () {
+        console.log('productIdentifierChanged : this.product.identifier : ' + this.product.identifier + ', productIdentifier : ' + this.productIdentifier)
+        this.product.identifier = this.productIdentifier
         this.setDuty()
       })
     },

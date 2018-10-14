@@ -50,6 +50,22 @@ import iconRefresh from '../../assets/refresh.png'
 
 export default {
   name: 'ProductsList',
+  props: {
+    reloadrequest: {
+      type: Number,
+      required: true,
+      default: 0
+    }
+  },
+  watch: {
+    reloadrequest (newVal, oldVal) {
+      console.log('detect reloadRequest at ProductsList.vue')
+      this.refreshList()
+    }
+    // productName () {
+    //   return this.product === null ? '****-****' : this.product.name
+    // }
+  },
   data () {
     let sortOrders = {}
     let columns = ['品番', '製品名称', '客先', '登録日時', '説明']
