@@ -1,6 +1,6 @@
 <template>
   <div class="products">
-    <ProductsList @editProduct='editProduct'></ProductsList>
+    <ProductsList @editProduct='editProduct' @createProduct='createProduct'></ProductsList>
     <ProductEdit :product="product"></ProductEdit>
   </div>
 </template>
@@ -23,7 +23,24 @@ export default {
   methods: {
     editProduct (product) {
       console.log('ProductView.editProduct')
-      console.log(product)
+      let customFields = []
+      product.custom_fields.forEach(field => {
+        let obj = Object.assign({}, field)
+        customFields.push(obj)
+      })
+      this.product = Object.assign({}, product)
+      this.product.custom_fields = customFields
+    },
+    createProduct () {
+      let product = {
+        id: -1,
+        name: '新規登録',
+        description: '',
+        identifier: '',
+        custom_fields: [
+          {id: 12, name: '顧客情報', value: '未定'}
+        ]
+      }
       this.product = product
     }
   }

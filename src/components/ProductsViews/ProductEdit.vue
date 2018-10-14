@@ -1,19 +1,52 @@
 <template>
   <div class="product-edit">
     <div class="operation-field">
-      更新ボタンを配置する。
+      <b-button v-if="(product && product.id === -1)"
+        class="control-button create"
+        variant="success"
+        v-bind:disabled="!duty"
+        @click='createProductInfo'>
+        登録
+      </b-button>
+      <b-button v-else
+        class="control-button create"
+        variant="success"
+        v-bind:disabled="!product || !duty"
+        @click='updateProductInfo'>
+        更新
+      </b-button>
     </div>
     <div class="edit-field">
       <div class="item-field">
-          <label for="inputName" class="grid-item item-label product-name-label">製品名称</label>
-          <input type="text" class="grid-item item-form product-name-form" id="inputName" placeholder="製品名称" v-model="productName">
-          <label for="inputIdentifier" class="grid-item item-label product-number-label">製品番号</label>
-          <input type="text" class="grid-item item-form product-number-form" id="inputIdentifier" placeholder="製品番号" v-model="productIdentifier">
-          <label for="inputProjcetCutomer" class="grid-item item-label product-customer-label">客先</label>
-          <b-form-select class="grid-item item-form product-customer-form" v-model="productCustomer" :options="customerOptions">
+          <!-- 製品名称 -->
+          <label class="grid-item item-label product-name-label">製品名称</label>
+          <input type="text"
+            class="grid-item item-form product-name-form"
+            placeholder="製品名称"
+            v-model="productName"
+            @change="productNameChanged">
+          <!-- 製品番号 -->
+          <label class="grid-item item-label product-number-label">製品番号</label>
+          <input type="text"
+            class="grid-item item-form product-number-form"
+            placeholder="製品番号"
+            v-model="productIdentifier"
+            v-bind:disabled="!(product && product.id === -1)">
+          <!-- 客先 -->
+          <label class="grid-item item-label product-customer-label">客先</label>
+          <b-form-select class="grid-item item-form product-customer-form"
+            v-model="productCustomer"
+            :options="customerOptions"
+            @change="productCustomerChanged">
           </b-form-select>
+          <!-- 製品説明 -->
           <label for="inputDescription" class="grid-item item-label product-desc-label">説明</label>
-          <textarea class="grid-item item-form product-desc-form" rows="3" id="inputDescription" v-model="productDescription"></textarea>
+          <textarea class="grid-item item-form product-desc-form"
+            rows="3"
+            id="inputDescription"
+            v-model="productDescription"
+            @change="productDescriptionChanged">
+          </textarea>
       </div>
       <div class="userinfo-field">
         <table class="user-info">
@@ -28,8 +61,18 @@
           <tbody class="user-info-data">
             <tr class="user-info-tr data" v-for="(entry,idx) in userInfo" v-bind:key=idx>
               <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
-                <input type="checkbox" v-if="val==='管理者'" v-model="roleManager" v-bind:value="entry"/>
-                <input type="checkbox" v-else-if="val==='報告者'" v-model="roleReporter" v-bind:value="entry" />
+                <!-- 管理者 -->
+                <input type="checkbox"
+                  v-if="val==='管理者'"
+                  v-model="roleManager"
+                  v-bind:value="entry"
+                  @change="roleManagerChanged(entry)">
+                <!-- 報告者 -->
+                <input type="checkbox"
+                  v-else-if="val==='報告者'"
+                  v-model="roleReporter"
+                  v-bind:value="entry"
+                  @change="roleReporterChanged(entry)">
                 <span v-else>
                   {{entry[val]}}
                 </span>
@@ -65,12 +108,6 @@ export default {
   },
   data () {
     let userInfoColumns = ['名前', '管理者', '報告者']
-    let userInfo = [
-      {'名前': '不適合管理　責任者1', '管理者': true, '報告者': true},
-      {'名前': '不適合管理　責任者2', '管理者': true, '報告者': true},
-      {'名前': '不適合管理　担当者1', '管理者': true, '報告者': true},
-      {'名前': '不適合管理　担当者2', '管理者': true, '報告者': true}
-    ]
     return {
       productName: '',
       productIdentifier: '',
@@ -80,12 +117,69 @@ export default {
       members: null,
       users: null,
       userInfoColumns: userInfoColumns,
-      userInfo: userInfo,
+      // userInfo: userInfo,
+      userInfo: [],
       roleManager: [],
-      roleReporter: []
+      roleReporter: [],
+      duty: false
     }
   },
   methods: {
+    // 更新
+    updateProductInfo () {
+      console.log('updateProductInfo')
+    },
+    // 編集フラグのセット
+    setDuty () {
+      this.duty = true
+    },
+    resetDuty () {
+      this.duty = false
+    },
+    // 製品名の更新
+    productNameChanged () {
+      this.$nextTick(function () {
+        console.log('productNameChanged : this.product.name : ' + this.product.name + ', productName : ' + this.productName)
+        this.product.name = this.productName
+        this.setDuty()
+      })
+    },
+    // 客先の更新
+    productCustomerChanged () {
+      this.$nextTick(function () {
+        let before
+        this.product.custom_fields.forEach(field => {
+          if (field.name === '顧客情報') {
+            before = field.value
+            field.value = this.productCustomer
+            this.setDuty()
+          }
+        })
+        console.log('productCustomerChanged : before : ' + before + ', after : ' + this.productCustomer)
+      })
+    },
+    // 製品説明の更新
+    productDescriptionChanged () {
+      this.$nextTick(function () {
+        console.log('productDescriptionChanged : this.product.description : ' + this.product.description + ', productDescription : ' + this.productDescription)
+        this.product.description = this.productDescription
+        this.setDuty()
+      })
+    },
+    // メンバーシップ（管理者権限）の更新
+    roleManagerChanged (entry) {
+      console.log('roleManagerChanged')
+      console.log(entry)
+      console.log(this.roleManager)
+      this.setDuty()
+    },
+    // メンバーシップ（報告者権限）の更新
+    roleReporterChanged (entry) {
+      console.log('roleReporterChangd')
+      console.log(entry)
+      console.log(this.roleReporter)
+      this.setDuty()
+    },
     setUserInfo () {
       // userInfo の表示オブジェクト生成
       let usersList = []
@@ -107,10 +201,8 @@ export default {
           }
         }
         let userinfo = '{' +
-          ' "id" : "' + user.id + '"' +
-          ',"名前" : "' + user.firstname + ' ' + user.lastname + '"' +
-          ',"管理者" : "' + manager + '"' +
-          ',"報告者" : "' + reporter + '"' +
+        ' "id" : "' + user.id + '"' +
+        ',"名前" : "' + user.firstname + ' ' + user.lastname + '"' +
         ' }'
         let obj = JSON.parse(userinfo)
         if (manager) {
@@ -142,6 +234,7 @@ export default {
         this.members = naim.getProjectMemberships(this.product.id)
         console.log(this.members)
         this.setUserInfo()
+        this.resetDuty()
       }
     }
   },
@@ -174,6 +267,11 @@ export default {
   padding-top: 6px;
   height: 50px;
 }
+.control-button {
+  float: left;
+  margin-left: 1em;
+}
+
 .edit-field {
   padding-top: 6px;
   display: grid;

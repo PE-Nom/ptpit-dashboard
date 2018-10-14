@@ -133,6 +133,7 @@ export default {
     },
     createProduct () {
       console.log('create products')
+      this.$emit('createProduct')
     },
     async refreshList () {
       console.log('refreshList')
