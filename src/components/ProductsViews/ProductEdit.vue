@@ -120,6 +120,8 @@ export default {
       customerOptions: [{value: '', text: ''}],
       productCustomer: '',
       members: null,
+      membershipOrigin: [],
+      membershipEdited: [],
       users: null,
       userInfoColumns: userInfoColumns,
       // userInfo: userInfo,
@@ -222,6 +224,9 @@ export default {
       let usersList = []
       let roleManager = []
       let roleReporter = []
+      this.membershipOrigin = []
+      this.members = naim.getProjectMemberships(this.product.id)
+      console.log(this.members)
       this.users.forEach(user => {
         let manager = false
         let reporter = false
@@ -268,8 +273,6 @@ export default {
         this.productIdentifier = this.product.identifier
         this.users = naim.getUsers()
         console.log(this.users)
-        this.members = naim.getProjectMemberships(this.product.id)
-        console.log(this.members)
         this.setUserInfo()
         this.resetDuty()
       }
