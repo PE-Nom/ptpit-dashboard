@@ -18,6 +18,7 @@
     </div>
     <div class="edit-field">
       <div class="item-field">
+        <div class="items">
           <!-- 製品名称 -->
           <label class="grid-item item-label product-name-label">製品名称</label>
           <input type="text"
@@ -47,39 +48,46 @@
             v-model="productDescription"
             @change="productDescriptionChanged">
           </textarea>
+        </div>
       </div>
       <div class="userinfo-field">
-        <table class="user-info">
-          <caption class="user-info-caption">関係者リスト</caption>
-          <thead class="user-info-header">
-            <tr class="user-info-tr head">
-              <th class="user-info-th" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
-                {{val}}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="user-info-data">
-            <tr class="user-info-tr data" v-for="(entry,idx) in userInfo" v-bind:key=idx>
-              <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
-                <!-- 管理者 -->
-                <input type="checkbox"
-                  v-if="val==='管理者'"
-                  v-model="roleManager"
-                  v-bind:value="entry"
-                  @change="roleManagerChanged(entry)">
-                <!-- 報告者 -->
-                <input type="checkbox"
-                  v-else-if="val==='報告者'"
-                  v-model="roleReporter"
-                  v-bind:value="entry"
-                  @change="roleReporterChanged(entry)">
-                <span v-else>
-                  {{entry[val]}}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <!--
+        -->
+        <div class="users">
+          <table class="user-info">
+            <caption class="user-info-caption">関係者リスト</caption>
+            <thead class="user-info-header">
+              <tr class="user-info-tr head">
+                <th class="user-info-th" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
+                  {{val}}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="user-info-data">
+              <tr class="user-info-tr data" v-for="(entry,idx) in userInfo" v-bind:key=idx>
+                <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
+                  <!-- 管理者 -->
+                  <input type="checkbox"
+                    v-if="val==='管理者'"
+                    v-model="roleManager"
+                    v-bind:value="entry"
+                    @change="roleManagerChanged(entry)">
+                  <!-- 報告者 -->
+                  <input type="checkbox"
+                    v-else-if="val==='報告者'"
+                    v-model="roleReporter"
+                    v-bind:value="entry"
+                    @change="roleReporterChanged(entry)">
+                  <span v-else>
+                    {{entry[val]}}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        <!--
+        -->
+        </div>
       </div>
     </div>
   </div>
@@ -280,7 +288,12 @@ export default {
 }
 .item-field {
   padding-top: 6px;
+}
+.items {
   display: grid;
+  width: 30vw;
+  margin-left: auto;
+  margin-right: 50px;
   grid-template-rows: 50px 50px 50px 150px;
   grid-template-columns: 10vw 20vw;
   grid-template-areas:
@@ -330,6 +343,11 @@ export default {
  */
 .userinfo-field {
   padding-top: 6px;
+}
+.users {
+  width: 450px;
+  margin-left: 50px;
+  margin-right: auto;
 }
 .user-info-caption {
   padding-top: 0px;
