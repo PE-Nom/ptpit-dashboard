@@ -4,7 +4,7 @@
       <b-button v-if="(product && product.id === -1)"
         class="control-button create"
         variant="success"
-        v-bind:disabled="!productDuty || !membershipDuty"
+        v-bind:disabled="(!productDuty && !membershipDuty)"
         @click='createInfo'>
         登録
       </b-button>
@@ -31,8 +31,9 @@
           <input type="text"
             class="grid-item item-form product-number-form"
             placeholder="製品番号"
-            v-model="productIdentifier"
+            :value="productIdentifier"
             v-bind:disabled="!(product && product.id === -1)"
+            @input="productIdentifier = $event.target.value.toLowerCase()"
             @change="productIdentifierChanged">
           <!-- 客先 -->
           <label class="grid-item item-label product-customer-label">客先</label>
@@ -125,7 +126,6 @@ export default {
       editedMemberships: [],
       users: null,
       userInfoColumns: userInfoColumns,
-      // userInfo: userInfo,
       userInfo: [],
       roleManager: [],
       roleReporter: [],
@@ -135,14 +135,38 @@ export default {
   },
   methods: {
     // 登録
-    createInfo () {
+    async createInfo () {
       console.log('createInfo')
+      if (this.productDuty) {
+        await this.createProductInfo()
+      }
+      if (this.membershipDuty) {
+        await this.createMembership()
+      }
+      this.$emit('reloadRequest')
     },
-    createProductInfo () {
+    async createProductInfo () {
       console.log('createProductInfo')
+      try {
+        let query = {
+          project: {
+            name: this.product.name,
+            identifier: this.product.identifier,
+            description: this.product.description,
+            is_public: false,
+            custom_fields: this.product.custom_fields
+          }
+        }
+        let res = await naim.createProject(query)
+        this.product.id = res.data.project.id
+        console.log(res)
+      } catch (err) {
+        console.log(err)
+      }
     },
-    createMembership () {
+    async createMembership () {
       console.log('createMenbership')
+      await this.updateMembership()
     },
     // 更新
     async updateInfo () {
@@ -160,7 +184,7 @@ export default {
         let query = {
           project: {
             name: this.product.name,
-            identifier: this.product.ientifier,
+            identifier: this.product.identifier,
             description: this.product.description,
             is_public: false,
             custom_fields: this.product.custom_fields

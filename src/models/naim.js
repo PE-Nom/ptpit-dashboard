@@ -262,7 +262,7 @@ export default {
           console.log('==== Membership of project @ naim ====')
           for (let membership of res.data.memberships) {
             this.memberships.push(membership)
-            if (membership.user.id === this.userId && prj.parent !== undefined) {
+            if (membership.user.id === this.userId) {
               // console.log('find userId')
               let availablePrj = Object.assign({}, prj)
               Object.assign(availablePrj, {roles: membership.roles})
@@ -295,11 +295,13 @@ export default {
     return members
   },
   async createProject (qstr) {
+    let ret = null
     try {
-      await redmine.createProject(qstr, res => {
-        // console.log('==== Create Project @ naim ====')
-        // console.log(res)
+      ret = await redmine.createProject(qstr, res => {
+        console.log('==== Create Project @ naim ====')
+        console.log(res)
       })
+      return ret
     } catch (err) {
       throw err
     }

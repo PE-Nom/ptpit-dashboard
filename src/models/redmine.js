@@ -89,13 +89,16 @@ export default {
   },
   async createProject (data, callback) {
     console.log('createProject @ redmine.js')
+    let ret = null
     await this.rmc.post('/projects.json', data, {headers: {'Content-Type': 'application/json'}})
       .then(res => {
         callback(res)
+        ret = res
       })
       .catch(err => {
         throw (err)
       })
+    return ret
   },
   async createMembership (prjId, data, callback) {
     console.log('createMembership @ redmine.js')
