@@ -4,15 +4,15 @@
       <b-button v-if="(product && product.id === -1)"
         class="control-button create"
         variant="success"
-        v-bind:disabled="!duty"
-        @click='createProductInfo'>
+        v-bind:disabled="!productDuty || !membershipDuty"
+        @click='createInfo'>
         登録
       </b-button>
       <b-button v-else
         class="control-button create"
         variant="success"
-        v-bind:disabled="!product || !duty"
-        @click='updateProductInfo'>
+        v-bind:disabled="!product || (!productDuty && !membershipDuty)"
+        @click='updateInfo'>
         更新
       </b-button>
     </div>
@@ -67,13 +67,13 @@
                 <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
                   <!-- 管理者 -->
                   <input type="checkbox"
-                    v-if="val==='管理者'"
+                    v-if="val===managerRoleName"
                     v-model="roleManager"
                     v-bind:value="entry"
                     @change="roleManagerChanged(entry)">
                   <!-- 報告者 -->
                   <input type="checkbox"
-                    v-else-if="val==='報告者'"
+                    v-else-if="val===reporterRoleName"
                     v-model="roleReporter"
                     v-bind:value="entry"
                     @change="roleReporterChanged(entry)">
@@ -93,6 +93,8 @@
 <script>
 import naim from '../../models/naim.js'
 
+const managerRoleName = '管理者'
+const reporterRoleName = '報告者'
 export default {
   name: 'ProductEdit',
   props: {
@@ -107,72 +109,221 @@ export default {
       console.log('detect product selecting at ProductEdit.vue')
       this.setData()
     }
-    // productName () {
-    //   return this.product === null ? '****-****' : this.product.name
-    // }
   },
   data () {
-    let userInfoColumns = ['名前', '管理者', '報告者']
+    let userInfoColumns = ['名前', managerRoleName, reporterRoleName]
     return {
+      managerRoleName: managerRoleName,
+      reporterRoleName: reporterRoleName,
       productName: '',
       productIdentifier: '',
       productDescription: '',
       customerOptions: [{value: '', text: ''}],
       productCustomer: '',
       members: null,
-      membershipOrigin: [],
-      membershipEdited: [],
+      originalMemberships: [],
+      editedMemberships: [],
       users: null,
       userInfoColumns: userInfoColumns,
       // userInfo: userInfo,
       userInfo: [],
       roleManager: [],
       roleReporter: [],
-      duty: false
+      productDuty: false,
+      membershipDuty: false
     }
   },
   methods: {
-    createQueryString () {
-      console.log('createQueryString')
-      let qstr = {
-        project: {
-          name: this.product.name,
-          identifier: this.product.ientifier,
-          description: this.product.description,
-          is_public: false,
-          custom_fields: this.product.custom_fields
-        }
-      }
-      return qstr
-    },
     // 登録
+    createInfo () {
+      console.log('createInfo')
+    },
     createProductInfo () {
       console.log('createProductInfo')
     },
+    createMembership () {
+      console.log('createMenbership')
+    },
     // 更新
+    async updateInfo () {
+      if (this.productDuty) {
+        await this.updateProductInfo()
+      }
+      if (this.membershipDuty) {
+        await this.updateMembership()
+      }
+      this.$emit('reloadRequest')
+    },
     async updateProductInfo () {
       console.log('updateProductInfo')
       try {
-        let query = this.createQueryString()
+        let query = {
+          project: {
+            name: this.product.name,
+            identifier: this.product.ientifier,
+            description: this.product.description,
+            is_public: false,
+            custom_fields: this.product.custom_fields
+          }
+        }
         await naim.updateProject(this.product.id, query)
-        this.$emit('reloadRequest')
       } catch (err) {
         console.log(err)
       }
     },
-    // 編集フラグのセット
-    setDuty () {
-      this.duty = true
+    async updateMembership () {
+      console.log('updateMembership')
+      // (1) 編集後のmembership 情報生成
+      // roleManager をスキャンして
+      // user 情報がある場合、menbershipオブジェクト({user_id,roles[roleId]}) を構築して
+      // editedMemberships に push する
+      this.editedMemberships = []
+      this.roleManager.forEach(user => {
+        let membership = {
+          user_id: user.id, // user の id
+          role_ids: [naim.getRoleId(managerRoleName)] // role の id の配列
+        }
+        this.editedMemberships.push(membership)
+      })
+      // console.log(this.editedMemberships)
+      // console.log('======')
+      // roleReporter をスキャンして
+      // user情報がある場合、 editedMemberships をスキャンする
+      // editedMemberships に同一のユーザー情報がすでにある場合、当該の membership の role_ids に roleReporterのidをpush する
+      // editedMemberships に同一のユーザー情報が存在しない場合、membershipオブジェクト({user_id,roles[roleId]})を構築して editedMemberships に push する
+      // console.log(this.roleReporter)
+      this.roleReporter.forEach(user => {
+        let alreadyExist = false
+        this.editedMemberships.forEach(membership => {
+          if (membership.user_id === user.id) {
+            membership.role_ids.push(naim.getRoleId(reporterRoleName))
+            alreadyExist = true
+          }
+        })
+        if (!alreadyExist) {
+          let membership = {
+            user_id: user.id, // user の id
+            role_ids: [naim.getRoleId(reporterRoleName)] // role の id の配列
+          }
+          this.editedMemberships.push(membership)
+        }
+      })
+      // console.log(this.editedMemberships)
+      // console.log('======')
+
+      // (2) オリジナルとの差分をとる
+      // edited に あって original にない --> post
+      // edited に あって original にもある --> put
+      // edited に なく orijinal にある --> delete
+      // console.log('=== originalMembership :')
+      // console.log(this.originalMemberships)
+      // console.log('=== editedMembership :')
+      // console.log(this.editedMemberships)
+      let postMembership = []
+      let putMembership = []
+      let deleteMembership = []
+      // search post, put membership
+      this.editedMemberships.forEach(edited => {
+        let alreadyExist = false
+        for (let origin of this.originalMemberships) {
+          // console.log('origin.user_id : ' + origin.user_id + ', edited.user_id : ' + edited.user_id)
+          if (edited.user_id === origin.user_id) {
+            // role の数が異なる
+            if (edited.role_ids.length !== origin.role_ids.length) {
+              edited = Object.assign(edited, {id: origin.id})
+              putMembership.push(edited)
+              // console.log('putMembership')
+            } else {
+              // role の値が異なる
+              for (let i in edited.role_ids) {
+                let roles = origin.role_ids.filter(roleId => {
+                  return roleId === edited.role_ids[i]
+                })
+                if (roles.length === 0) {
+                  edited = Object.assign(edited, {id: origin.id})
+                  putMembership.push(edited)
+                  // console.log('putMembership')
+                  break
+                }
+              }
+            }
+            alreadyExist = true
+            break
+          }
+        }
+        if (!alreadyExist) {
+          // console.log('postMembership')
+          postMembership.push(edited)
+        }
+      })
+      // search delete membership
+      this.originalMemberships.forEach(origin => {
+        let alreadyExist = false
+        this.editedMemberships.forEach(edited => {
+          if (origin.user_id === edited.user_id) {
+            alreadyExist = true
+          }
+        })
+        if (!alreadyExist) {
+          // console.log('deleteMembership')
+          deleteMembership.push(origin)
+        }
+      })
+      // console.log('### postMembersip')
+      // console.log(postMembership)
+      // console.log('### putMembership')
+      // console.log(putMembership)
+      // console.log('### deleteMembership')
+      // console.log(deleteMembership)
+      if (postMembership.length !== 0) {
+        for (let membership of postMembership) {
+          try {
+            await naim.createMembership(this.product.id, {membership: membership})
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      }
+      if (putMembership.length !== 0) {
+        for (let membership of putMembership) {
+          try {
+            console.log(membership)
+            await naim.deleteMembership(membership.id)
+            await naim.createMembership(this.product.id, {membership: membership})
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      }
+      if (deleteMembership.length !== 0) {
+        for (let membership of deleteMembership) {
+          try {
+            await naim.deleteMembership(membership.id)
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      }
     },
-    resetDuty () {
-      this.duty = false
+    // 編集フラグのセット
+    setProductDuty () {
+      this.productDuty = true
+    },
+    resetProductDuty () {
+      this.productDuty = false
+    },
+    setMembershipDuty () {
+      this.membershipDuty = true
+    },
+    resetMembershipDuty () {
+      this.membershipDuty = false
     },
     // 製品名の更新
     productNameChanged () {
       this.$nextTick(function () {
         console.log('productNameChanged : this.product.name : ' + this.product.name + ', productName : ' + this.productName)
         this.product.name = this.productName
-        this.setDuty()
+        this.setProductDuty()
       })
     },
     // 製品番号の更新（登録時のみ）
@@ -180,7 +331,7 @@ export default {
       this.$nextTick(function () {
         console.log('productIdentifierChanged : this.product.identifier : ' + this.product.identifier + ', productIdentifier : ' + this.productIdentifier)
         this.product.identifier = this.productIdentifier
-        this.setDuty()
+        this.setProductDuty()
       })
     },
     // 客先の更新
@@ -191,7 +342,7 @@ export default {
           if (field.name === '顧客情報') {
             before = field.value
             field.value = this.productCustomer
-            this.setDuty()
+            this.setProductDuty()
           }
         })
         console.log('productCustomerChanged : before : ' + before + ', after : ' + this.productCustomer)
@@ -202,51 +353,67 @@ export default {
       this.$nextTick(function () {
         console.log('productDescriptionChanged : this.product.description : ' + this.product.description + ', productDescription : ' + this.productDescription)
         this.product.description = this.productDescription
-        this.setDuty()
+        this.setProductDuty()
       })
     },
     // メンバーシップ（管理者権限）の更新
     roleManagerChanged (entry) {
       console.log('roleManagerChanged')
-      console.log(entry)
-      console.log(this.roleManager)
-      this.setDuty()
+      this.setMembershipDuty()
     },
     // メンバーシップ（報告者権限）の更新
     roleReporterChanged (entry) {
       console.log('roleReporterChangd')
-      console.log(entry)
-      console.log(this.roleReporter)
-      this.setDuty()
+      this.setMembershipDuty()
     },
     setUserInfo () {
       // userInfo の表示オブジェクト生成
+      console.log('setUserInfo')
+
+      // 編集前のメンバーシップ情報を保持
+      this.members = naim.getProjectMemberships(this.product.id)
+      console.log(this.members)
+      this.originalMemberships = []
+      for (let member of this.members) {
+        let roles = []
+        member.roles.forEach(role => {
+          roles.push(role.id)
+        })
+        let membership = {
+          id: member.id, // membership の id
+          user_id: member.user.id, // user の id
+          role_ids: roles // role の id の配列
+        }
+        this.originalMemberships.push(membership)
+      }
+      console.log(this.originalMemberships)
+
+      // ユーザー情報を構築
+      this.users = naim.getUsers()
+      console.log(this.users)
       let usersList = []
       let roleManager = []
       let roleReporter = []
-      this.membershipOrigin = []
-      this.members = naim.getProjectMemberships(this.product.id)
-      console.log(this.members)
       this.users.forEach(user => {
         let manager = false
         let reporter = false
-        for (let member of this.members) {
-          if (user.id === member.user.id) {
-            member.roles.forEach(role => {
-              if (role.name === '管理者') {
+        for (let membership of this.originalMemberships) {
+          if (user.id === membership.user_id) {
+            membership.role_ids.forEach(role => {
+              let name = naim.getRoleName(role)
+              if (name === managerRoleName) {
                 manager = true
-              } else if (role.name === '報告者') {
+              } else if (name === reporterRoleName) {
                 reporter = true
               }
             })
             break
           }
         }
-        let userinfo = '{' +
-        ' "id" : "' + user.id + '"' +
-        ',"名前" : "' + user.firstname + ' ' + user.lastname + '"' +
-        ' }'
-        let obj = JSON.parse(userinfo)
+        let obj = {
+          id: user.id,
+          '名前': user.firstname + ' ' + user.lastname
+        }
         if (manager) {
           roleManager.push(obj)
         }
@@ -260,8 +427,6 @@ export default {
       this.userInfo = usersList
     },
     setData () {
-      console.log('setData')
-      console.log(this.product)
       if (this.product) {
         this.productName = this.product.name
         this.product.custom_fields.forEach(field => {
@@ -271,10 +436,9 @@ export default {
         })
         this.productDescription = this.product.description
         this.productIdentifier = this.product.identifier
-        this.users = naim.getUsers()
-        console.log(this.users)
         this.setUserInfo()
-        this.resetDuty()
+        this.resetProductDuty()
+        this.resetMembershipDuty()
       }
     }
   },

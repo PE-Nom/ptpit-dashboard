@@ -176,6 +176,15 @@ export default {
     })
     return id
   },
+  getRoleName (roleId) {
+    let name = null
+    this.roles.forEach(role => {
+      if (role.id === roleId) {
+        name = role.name
+      }
+    })
+    return name
+  },
   // ------------------
   // Issue Status
   // ------------------
@@ -285,12 +294,21 @@ export default {
     })
     return members
   },
-
-  createProject: async function (qstr) {
+  async createProject (qstr) {
     try {
       await redmine.createProject(qstr, res => {
         // console.log('==== Create Project @ naim ====')
         // console.log(res)
+      })
+    } catch (err) {
+      throw err
+    }
+  },
+  async createMembership (prjId, qstr) {
+    try {
+      await redmine.createMembership(prjId, qstr, res => {
+        console.log('==== Create Membership @ naim ====')
+        console.log(res)
       })
     } catch (err) {
       throw err
@@ -306,11 +324,32 @@ export default {
       throw err
     }
   },
-  deleteProject: async function (prjId) {
+  async updateMembership (membershipId, query) {
+    try {
+      console.log(membershipId)
+      await redmine.updateMembership(membershipId, query, res => {
+        console.log('==== Update Membership @ naim ====')
+        console.log(res)
+      })
+    } catch (err) {
+      throw err
+    }
+  },
+  async deleteProject (prjId) {
     try {
       await redmine.deleteProject(prjId, res => {
         // console.log('==== Delete Project @ naim ====')
         // console.log(res)
+      })
+    } catch (err) {
+      throw err
+    }
+  },
+  async deleteMembership (membershiId) {
+    try {
+      await redmine.deleteMembership(membershiId, res => {
+        console.log('==== Delete Membership @ naim ====')
+        console.log(res)
       })
     } catch (err) {
       throw err

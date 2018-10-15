@@ -97,9 +97,30 @@ export default {
         throw (err)
       })
   },
+  async createMembership (prjId, data, callback) {
+    console.log('createMembership @ redmine.js')
+    await this.rmc.post('/projects/' + prjId + '/memberships.json', data, {headers: {'Content-Type': 'application/json'}})
+      .then(res => {
+        callback(res)
+      })
+      .catch(err => {
+        throw (err)
+      })
+  },
   async updateProject (prjId, data, callback) {
     console.log('updateProject @ redmine.js')
     await this.rmc.put('/projects/' + prjId + '.json', data, {headers: {'Content-Type': 'application/json'}})
+      .then(res => {
+        callback(res)
+      })
+      .catch(err => {
+        throw (err)
+      })
+  },
+  async updateMembership (membershipId, data, callback) {
+    console.log('updateMembership @ redmine.js')
+    console.log(membershipId)
+    await this.rmc.put('/memberships/' + membershipId + '.json', data, {headers: {'Content-Type': 'application/json'}})
       .then(res => {
         callback(res)
       })
@@ -117,7 +138,16 @@ export default {
         throw (err)
       })
   },
-
+  async deleteMembership (membershipId, callback) {
+    console.log('deleteMembership @ redmain.js')
+    await this.rmc.delete('/memberships/' + membershipId + '.json')
+      .then(res => {
+        callback(res)
+      })
+      .catch(err => {
+        throw (err)
+      })
+  },
   // ============
   // Issue
   // ============
