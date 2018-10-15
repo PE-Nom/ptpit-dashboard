@@ -34,8 +34,6 @@ export default {
       await this.retrieveTrackers()
       await this.retrieveCustomFields()
       await this.retrieveRoles()
-      console.log('管理者 id : ' + this.getRoleId('管理者'))
-      console.log('報告者 id : ' + this.getRoleId('報告者'))
       await this.retrieveIssueStatuses()
       await this.retrieveIssuePriorities()
       //
@@ -66,7 +64,14 @@ export default {
         // this.users = util.convertUsersObjs(res.data.users)
         this.users = res.data.users
         console.log(this.users)
-        this.userId = this.getUserId(userName)
+        let id = null
+        this.users.forEach(user => {
+          if (user.login === userName) {
+            console.log(user)
+            id = user.id
+          }
+        })
+        this.userId = id
         console.log('getUserId : ' + userName + ' id : ' + this.userId)
       })
     } catch (err) {
@@ -78,15 +83,8 @@ export default {
     // return util.convertUsersObjs(this.users)
     return this.users
   },
-  getUserId (userName) {
-    let id = null
-    this.users.forEach(user => {
-      if (user.login === userName) {
-        console.log(user)
-        id = user.id
-      }
-    })
-    return id
+  getUserId () {
+    return this.userId
   },
   // ------------------
   // Trackers

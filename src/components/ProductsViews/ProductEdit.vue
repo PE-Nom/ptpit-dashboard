@@ -33,7 +33,7 @@
             placeholder="製品番号"
             :value="productIdentifier"
             v-bind:disabled="!(product && product.id === -1)"
-            @input="productIdentifier = $event.target.value.toLowerCase()"
+            @input="productIdentifier = $event.target.value.toLowerCase().replace(' ','-')"
             @change="productIdentifierChanged">
           <!-- 客先 -->
           <label class="grid-item item-label product-customer-label">客先</label>
@@ -421,17 +421,22 @@ export default {
       this.users.forEach(user => {
         let manager = false
         let reporter = false
-        for (let membership of this.originalMemberships) {
-          if (user.id === membership.user_id) {
-            membership.role_ids.forEach(role => {
-              let name = naim.getRoleName(role)
-              if (name === managerRoleName) {
-                manager = true
-              } else if (name === reporterRoleName) {
-                reporter = true
-              }
-            })
-            break
+        if (this.product.id === -1 && user.id === naim.getUserId()) {
+          manager = true
+          reporter = true
+        } else {
+          for (let membership of this.originalMemberships) {
+            if (user.id === membership.user_id) {
+              membership.role_ids.forEach(role => {
+                let name = naim.getRoleName(role)
+                if (name === managerRoleName) {
+                  manager = true
+                } else if (name === reporterRoleName) {
+                  reporter = true
+                }
+              })
+              break
+            }
           }
         }
         let obj = {
