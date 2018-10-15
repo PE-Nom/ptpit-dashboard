@@ -8,6 +8,7 @@ export default {
   memberships: [],
   availablePrjs: [],
   customFields: [],
+  roles: [],
   issues: [],
   issueDetail: null,
   issueStatuses: null,
@@ -32,6 +33,9 @@ export default {
       await this.retrieveUsers(user.username)
       await this.retrieveTrackers()
       await this.retrieveCustomFields()
+      await this.retrieveRoles()
+      console.log('管理者 id : ' + this.getRoleId('管理者'))
+      console.log('報告者 id : ' + this.getRoleId('報告者'))
       await this.retrieveIssueStatuses()
       await this.retrieveIssuePriorities()
       //
@@ -145,7 +149,33 @@ export default {
   clearCustomFileds () {
     this.cunstomFields = []
   },
-
+  // ------------------
+  // Roles
+  // ------------------
+  async retrieveRoles () {
+    try {
+      if (redmine.isConfigured()) {
+        await redmine.roles({}, res => {
+          console.log('==== retrieveRoles @ naim ====')
+          console.log(res)
+          this.roles = res.data.roles
+        })
+      }
+      // ここで customfields List を更新する。
+      console.log(this.roles)
+    } catch (err) {
+      throw err
+    }
+  },
+  getRoleId (rolename) {
+    let id = null
+    this.roles.forEach(role => {
+      if (role.name === rolename) {
+        id = role.id
+      }
+    })
+    return id
+  },
   // ------------------
   // Issue Status
   // ------------------

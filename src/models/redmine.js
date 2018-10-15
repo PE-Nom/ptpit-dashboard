@@ -53,6 +53,18 @@ export default {
         throw err
       })
   },
+  // ============
+  // Roles
+  // ============
+  async roles (params, callback) {
+    await this.rmc.get('/roles.json', params)
+      .then(res => {
+        callback(res)
+      })
+      .catch(err => {
+        throw err
+      })
+  },
 
   // ============
   // Project
