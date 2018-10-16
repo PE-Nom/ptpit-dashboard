@@ -90,6 +90,7 @@ export default {
       icon_refresh_list: iconRefresh,
       columns: columns,
       issues: [], // 不適合のトラッカーでフィルタ済み
+      filteredIssues: [], // 製品番号でフィルタした指摘一覧
       searchQuery: '',
       sortKey: 'キー',
       sortOrders: sortOrders,
@@ -102,7 +103,7 @@ export default {
     issueslist () {
       console.log('### issues computed property in IssuestList.vue ####')
       let ret = []
-      this.issues.forEach(issue => {
+      this.filteredIssues.forEach(issue => {
         let assignedName = issue.assigned_to ? issue.assigned_to.name : ''
         let dueDate = issue.due_date ? issue.due_date : '未定義'
         let rec = {
@@ -152,7 +153,21 @@ export default {
       this.sortOrders[key] = this.sortOrders[key] * -1
     },
     filterByProduct () {
-      console.log('filterByProduct')
+      this.$nextTick(function () {
+        let productName = ''
+        this.productOptions.forEach(option => {
+          if (option.value === this.product) {
+            productName = option.text
+          }
+        })
+        if (this.product === -1) {
+          this.filteredIssues = this.issues.slice(0)
+        } else {
+          this.filteredIssues = this.issues.filter(function (issue) {
+            return issue.project.name === productName
+          })
+        }
+      })
     },
     editIssue (entry) {
       console.log('editIssue')
@@ -162,6 +177,8 @@ export default {
     },
     refreshList () {
       console.log('refreshList')
+      this.issues = naim.getIssues()
+      this.filterByProduct()
     },
     setProductOptions () {
       console.log('setProductOptions')
@@ -183,6 +200,7 @@ export default {
     console.log('IssuesList created')
     this.setProductOptions()
     this.issues = naim.getIssues()
+    this.filteredIssues = this.issues.slice(0)
   },
   mounted () {
     console.log('IssuesList mounted')
