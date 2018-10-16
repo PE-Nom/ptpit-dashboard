@@ -19,6 +19,7 @@ export default {
   documentCategories: null,
   online: true,
   userId: null,
+  rootPrj: null,
 
   async initialize (user) {
     console.log('initialize @ naim')
@@ -39,7 +40,7 @@ export default {
       //
       await this.retrieveProjects()
       await this.retrieveMembershipOfProjects()
-      await this.retrieveIssues()
+      await this.retrieveIssues(this.getTrackerId('不適合'))
       //
       await this.retrieveTimeEntryActivities()
       await this.retrieveDocumentCategories()
@@ -103,6 +104,15 @@ export default {
   },
   getTrackers () {
     return util.convertOptionObjs(this.trackers, 'name')
+  },
+  getTrackerId (name) {
+    let id = null
+    this.trackers.forEach(tracker => {
+      if (tracker.name === name) {
+        id = tracker.id
+      }
+    })
+    return id
   },
   // ------------------
   // CustomField data
@@ -257,26 +267,32 @@ export default {
       let prjs = []
       for (let prj of this.projects) {
         await redmine.membershipOfProject(prj.id, res => {
-          console.log('==== Membership of project @ naim ====')
+          // console.log('==== Membership of project @ naim ====')
+          // console.log(prj)
           for (let membership of res.data.memberships) {
             this.memberships.push(membership)
             if (membership.user.id === this.userId) {
               // console.log('find userId')
-              let availablePrj = Object.assign({}, prj)
-              Object.assign(availablePrj, {roles: membership.roles})
-              prjs.push(availablePrj)
-              // this.availablePrjs.push(availablePrj)
+              if (prj.parent !== undefined) {
+                this.rootPrj = prj.parent
+                let availablePrj = Object.assign({}, prj)
+                Object.assign(availablePrj, {roles: membership.roles})
+                prjs.push(availablePrj)
+              }
             }
           }
         })
       }
-      console.log(this.memberships)
+      // console.log(this.memberships)
       this.availablePrjs = prjs
       // console.log(this.availablePrjs)
     } catch (err) {
       console.log('==== Membership of project @ naim ====')
       console.log(err)
     }
+  },
+  getParentProject () {
+    return this.rootPrj
   },
   getAvailableProjects () {
     return this.availablePrjs
@@ -367,14 +383,15 @@ export default {
   // ------------------
   // Issue data
   // ------------------
-  retrieveIssues: async function () {
+  columns: ['id', 'トラッカー', 'プロジェクト', '題名', '優先度', 'ステータス', '進捗率', '作成者', '担当者', '開始日', '期日', '更新日'],
+  async retrieveIssues (trackerId) {
     try {
       console.log('### retrieveIssues ###')
       // Issues List
       this.issues = []
       console.log(' call redmine.issues')
       if (redmine.isConfigured()) {
-        await redmine.issues(res => {
+        await redmine.issues(trackerId, res => {
           console.log('==== Issues @ naim ====')
           res.data.issues.forEach(el => {
             console.log(el)
@@ -382,18 +399,18 @@ export default {
             let dueRatio = el.done_ratio ? el.done_ratio : '0'
             let dueDate = el.due_date ? el.due_date : '未定義'
             let rec = '{' +
-              ' "' + util.columns[0] + '" : "#' + el.id + '"' +
-              ',"' + util.columns[1] + '" : "' + el.tracker.name + '"' +
-              ',"' + util.columns[2] + '" : "' + el.project.name + '"' +
-              ',"' + util.columns[3] + '" : "' + el.subject + '"' +
-              ',"' + util.columns[4] + '" : "' + el.priority.name + '"' +
-              ',"' + util.columns[5] + '" : "' + el.status.name + '"' +
-              ',"' + util.columns[6] + '" : "' + dueRatio + ' %"' +
-              ',"' + util.columns[7] + '" : "' + el.author.name + '"' +
-              ',"' + util.columns[8] + '" : "' + assignedName + '"' +
-              ',"' + util.columns[9] + '" : "' + el.start_date + '"' +
-              ',"' + util.columns[10] + '" : "' + dueDate + '"' +
-              ',"' + util.columns[11] + '" : "' + el.updated_on + '"' +
+              ' "' + this.columns[0] + '" : "#' + el.id + '"' +
+              ',"' + this.columns[1] + '" : "' + el.tracker.name + '"' +
+              ',"' + this.columns[2] + '" : "' + el.project.name + '"' +
+              ',"' + this.columns[3] + '" : "' + el.subject + '"' +
+              ',"' + this.columns[4] + '" : "' + el.priority.name + '"' +
+              ',"' + this.columns[5] + '" : "' + el.status.name + '"' +
+              ',"' + this.columns[6] + '" : "' + dueRatio + ' %"' +
+              ',"' + this.columns[7] + '" : "' + el.author.name + '"' +
+              ',"' + this.columns[8] + '" : "' + assignedName + '"' +
+              ',"' + this.columns[9] + '" : "' + el.start_date + '"' +
+              ',"' + this.columns[10] + '" : "' + dueDate + '"' +
+              ',"' + this.columns[11] + '" : "' + el.updated_on + '"' +
             '}'
             let obj = JSON.parse(rec)
             this.issues.push(obj)

@@ -1,6 +1,4 @@
 export default {
-  columns: ['id', 'トラッカー', 'プロジェクト', '題名', '優先度', 'ステータス', '進捗率', '作成者', '担当者', '開始日', '期日', '更新日'],
-
   convertOptions: function (values) {
     let options = []
     values.forEach(el => {

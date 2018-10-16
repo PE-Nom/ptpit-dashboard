@@ -139,14 +139,14 @@ export default {
       console.log('createInfo')
       if (this.productDuty) {
         await this.createProductInfo()
-      }
-      if (this.membershipDuty) {
         await this.createMembership()
       }
       this.$emit('reloadRequest')
     },
     async createProductInfo () {
       console.log('createProductInfo')
+      let parent = naim.getParentProject()
+      console.log(parent)
       try {
         let query = {
           project: {
@@ -154,6 +154,7 @@ export default {
             identifier: this.product.identifier,
             description: this.product.description,
             is_public: false,
+            parent_id: parent.id,
             custom_fields: this.product.custom_fields
           }
         }
@@ -454,20 +455,23 @@ export default {
       this.roleManager = roleManager
       this.roleReporter = roleReporter
       this.userInfo = usersList
+      this.resetMembershipDuty()
+    },
+    setProductInfo () {
+      this.productName = this.product.name
+      this.product.custom_fields.forEach(field => {
+        if (field.name === '顧客情報') {
+          this.productCustomer = field.value
+        }
+      })
+      this.productDescription = this.product.description
+      this.productIdentifier = this.product.identifier
+      this.resetProductDuty()
     },
     setData () {
       if (this.product) {
-        this.productName = this.product.name
-        this.product.custom_fields.forEach(field => {
-          if (field.name === '顧客情報') {
-            this.productCustomer = field.value
-          }
-        })
-        this.productDescription = this.product.description
-        this.productIdentifier = this.product.identifier
+        this.setProductInfo()
         this.setUserInfo()
-        this.resetProductDuty()
-        this.resetMembershipDuty()
       }
     }
   },

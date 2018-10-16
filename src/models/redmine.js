@@ -154,8 +154,8 @@ export default {
   // ============
   // Issue
   // ============
-  async issues (callback) {
-    await this.rmc.get('/issues.json?limit=100')
+  async issues (trackerId, callback) {
+    await this.rmc.get('/issues.json?limit=100&tracker_id=' + trackerId)
       .then(res => {
         callback(res)
       })
