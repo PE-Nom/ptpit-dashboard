@@ -149,6 +149,8 @@ export default {
     let customField = null
     this.customFields.forEach(element => {
       if (element.name === fieldName) {
+        // console.log('getCustomerFields')
+        // console.log(element)
         customField = util.convertOptions(element.possible_values)
       }
     })
@@ -383,7 +385,7 @@ export default {
   // ------------------
   // Issue data
   // ------------------
-  columns: ['id', 'トラッカー', 'プロジェクト', '題名', '優先度', 'ステータス', '進捗率', '作成者', '担当者', '開始日', '期日', '更新日'],
+  // columns: ['id', 'トラッカー', 'プロジェクト', '題名', '優先度', 'ステータス', '進捗率', '作成者', '担当者', '開始日', '期日', '更新日'],
   async retrieveIssues (trackerId) {
     try {
       console.log('### retrieveIssues ###')
@@ -394,26 +396,7 @@ export default {
         await redmine.issues(trackerId, res => {
           console.log('==== Issues @ naim ====')
           res.data.issues.forEach(el => {
-            console.log(el)
-            let assignedName = el.assigned_to ? el.assigned_to.name : ''
-            let dueRatio = el.done_ratio ? el.done_ratio : '0'
-            let dueDate = el.due_date ? el.due_date : '未定義'
-            let rec = '{' +
-              ' "' + this.columns[0] + '" : "#' + el.id + '"' +
-              ',"' + this.columns[1] + '" : "' + el.tracker.name + '"' +
-              ',"' + this.columns[2] + '" : "' + el.project.name + '"' +
-              ',"' + this.columns[3] + '" : "' + el.subject + '"' +
-              ',"' + this.columns[4] + '" : "' + el.priority.name + '"' +
-              ',"' + this.columns[5] + '" : "' + el.status.name + '"' +
-              ',"' + this.columns[6] + '" : "' + dueRatio + ' %"' +
-              ',"' + this.columns[7] + '" : "' + el.author.name + '"' +
-              ',"' + this.columns[8] + '" : "' + assignedName + '"' +
-              ',"' + this.columns[9] + '" : "' + el.start_date + '"' +
-              ',"' + this.columns[10] + '" : "' + dueDate + '"' +
-              ',"' + this.columns[11] + '" : "' + el.updated_on + '"' +
-            '}'
-            let obj = JSON.parse(rec)
-            this.issues.push(obj)
+            this.issues.push(el)
           })
         })
       }

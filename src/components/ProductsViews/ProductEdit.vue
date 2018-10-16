@@ -158,6 +158,7 @@ export default {
             custom_fields: this.product.custom_fields
           }
         }
+        console.log(this.product.custom_fields)
         let res = await naim.createProject(query)
         this.product.id = res.data.project.id
         console.log(res)
@@ -478,6 +479,7 @@ export default {
   created () {
     console.log('ProductEdit created')
     this.customerOptions = naim.getCustomeFileds('顧客情報')
+    console.log(this.customerOptions)
   },
   mounted () {
     console.log('ProductEdit mounted')
