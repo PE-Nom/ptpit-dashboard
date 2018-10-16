@@ -136,7 +136,7 @@ export default {
       throw err
     }
   },
-  findCustomFieldId (fieldName) {
+  getCustomFieldId (fieldName) {
     let fieldId
     this.customFields.forEach(element => {
       if (element.name === fieldName) {
@@ -262,6 +262,20 @@ export default {
     console.log('getProjects')
     return this.projects
     // return util.convertOptionObjs(this.projects, 'name')
+  },
+  async retrieveProject (prjId) {
+    let ret = null
+    try {
+      if (redmine.isConfigured()) {
+        ret = await redmine.project(prjId, {}, res => {
+          console.log('==== Create Project @ naim ====')
+          console.log(res)
+        })
+        return ret
+      }
+    } catch (err) {
+      throw err
+    }
   },
   async retrieveMembershipOfProjects () {
     try {

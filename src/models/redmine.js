@@ -78,6 +78,18 @@ export default {
         throw err
       })
   },
+  async project (prjId, params, callback) {
+    let ret = null
+    await this.rmc.get('/projects/' + prjId + '.json', params)
+      .then(res => {
+        callback(res)
+        ret = res
+      })
+      .catch(err => {
+        throw err
+      })
+    return ret
+  },
   async membershipOfProject (id, callback) {
     await this.rmc.get('/projects/' + id + '/memberships.json')
       .then(res => {

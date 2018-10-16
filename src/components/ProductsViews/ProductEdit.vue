@@ -146,7 +146,6 @@ export default {
     async createProductInfo () {
       console.log('createProductInfo')
       let parent = naim.getParentProject()
-      console.log(parent)
       try {
         let query = {
           project: {
@@ -154,14 +153,40 @@ export default {
             identifier: this.product.identifier,
             description: this.product.description,
             is_public: false,
+            tracker_ids: [naim.getTrackerId('不適合')],
             parent_id: parent.id,
-            custom_fields: this.product.custom_fields
+            issue_custom_field_ids: [
+              naim.getCustomFieldId('不適合内容'),
+              naim.getCustomFieldId('修正処置'),
+              naim.getCustomFieldId('不適合原因'),
+              naim.getCustomFieldId('是正処置'),
+              naim.getCustomFieldId('効果確認'),
+              naim.getCustomFieldId('水平展開'),
+              naim.getCustomFieldId('修正完了')
+            ],
+            project_custom_fields: this.product.custom_fields
           }
         }
-        console.log(this.product.custom_fields)
+        // console.log(this.product.custom_fields)
         let res = await naim.createProject(query)
+        // custome_fields の顧客情報をセットするため、リードバックしてupdateする
+        res = await naim.retrieveProject(res.data.project.id)
+        res.data.project.custom_fields.forEach(field => {
+          if (field.name === this.product.custom_fields[0].name) {
+            field.value = this.product.custom_fields[0].value
+          }
+        })
+        query = {
+          project: {
+            name: res.data.project.name,
+            identifier: res.data.project.identifier,
+            description: res.data.project.description,
+            custom_fields: res.data.project.custom_fields
+          }
+        }
+        await naim.updateProject(res.data.project.id, query)
         this.product.id = res.data.project.id
-        console.log(res)
+        // console.log(res)
       } catch (err) {
         console.log(err)
       }
