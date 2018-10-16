@@ -21,6 +21,7 @@ export default {
   methods: {
     editIssue (issue) {
       console.log('IssuesView.editIssue')
+      console.log(issue)
     },
     createIssue () {
       console.log('IssuesView.createIssue')

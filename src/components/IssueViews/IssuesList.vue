@@ -5,7 +5,7 @@
     </div>
     <div class="header-field">
       <div class="table-row header">
-        <div class="projectfilter">
+        <div class="productfilter">
           <b-form-select class="product-filter-form"
             v-model="product"
             :options="productOptions"
@@ -171,9 +171,11 @@ export default {
     },
     editIssue (entry) {
       console.log('editIssue')
+      this.$emit('editIssue', entry.issue)
     },
     createIssue () {
       console.log('createIssue')
+      this.$emit('createIssue')
     },
     refreshList () {
       console.log('refreshList')
@@ -263,13 +265,15 @@ export default {
     font-weight: bold;
     */
   }
-  .projectfilter {
+  .productfilter {
     height: 30%;
     padding-top: 6px;
     padding-left: 6px;
+    display: -webkit-flex;
+    display: flex;
   }
   .product-filter-form {
-    width: 30vw;
+    width: 20vw;
     float: left;
   }
   .operation {
