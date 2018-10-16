@@ -177,8 +177,9 @@ export default {
       console.log('createIssue')
       this.$emit('createIssue')
     },
-    refreshList () {
+    async refreshList () {
       console.log('refreshList')
+      await naim.retrieveIssues(naim.getTrackerId('不適合'))
       this.issues = naim.getIssues()
       this.filterByProduct()
     },

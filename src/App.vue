@@ -13,15 +13,15 @@
           <i class="fa fa-fw fa-bell-o"></i>
           <span>製品一覧</span>
         </a>
-        <a @click='menuselected("issues")'>
+        <a @click='menuselected("default")'>
           <i class="fa fa-fw fa-envelope-o"></i>
           <span>顧客情報</span>
         </a>
-        <a @click='menuselected("issues")'>
+        <a @click='menuselected("default")'>
           <i class="fa fa-fw fa-comment-o"></i>
           <span>ユーザー管理</span>
         </a>
-        <a @click='menuselected("issues")'>
+        <a @click='menuselected("default")'>
           <i class="fa fa-fw fa-bar-chart-o"></i>
           <span>統計分析</span>
         </a>
