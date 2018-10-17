@@ -55,24 +55,84 @@
             登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了
           </div>
           <div class="content-field">
-            <div class="nonconformity-field">
-              指摘内容
-            </div>
-            <div class="correct-field">
-              修正内容
-            </div>
-            <div class="cause-field">
-              原因分析
-            </div>
-            <div class="countermeasure-field">
-              是正処置
-            </div>
-            <div class="result-field">
-              効果確認
-            </div>
-            <div class="rollout-field">
-              水平展開
-            </div>
+            <!-- 指摘内容 -->
+            <b-card no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-btn block href="#" v-b-toggle.nonconformity variant="info">指摘内容</b-btn>
+              </b-card-header>
+              <b-collapse id="nonconformity" visible accordion="nonconformity-items" role="tabpanel">
+                <b-card-body>
+                  <div class="nonconformity-field">
+                    指摘内容
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+            <!-- 修正内容 -->
+            <b-card no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-btn block href="#" v-b-toggle.correct variant="info">修正内容</b-btn>
+              </b-card-header>
+              <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
+                <b-card-body>
+                  <div class="correct-field">
+                    修正内容
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+            <!-- 原因分析 -->
+            <b-card no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-btn block href="#" v-b-toggle.cause variant="info">原因分析</b-btn>
+              </b-card-header>
+              <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
+                <b-card-body>
+                  <div class="cause-field">
+                    原因分析
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+            <!-- 是正処置 -->
+            <b-card no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-btn block href="#" v-b-toggle.countermeasure variant="info">是正処置</b-btn>
+              </b-card-header>
+              <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
+                <b-card-body>
+                  <div class="countermeasure-field">
+                    是正処置
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+            <!-- 効果確認 -->
+            <b-card no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-btn block href="#" v-b-toggle.result variant="info">効果確認</b-btn>
+              </b-card-header>
+              <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
+                <b-card-body>
+                  <div class="result-field">
+                    効果確認
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+            <!-- 水平展開 -->
+            <b-card no-body class="mb-1">
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-btn block href="#" v-b-toggle.rollout variant="info">水平展開</b-btn>
+              </b-card-header>
+              <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
+                <b-card-body>
+                  <div class="rollout-field">
+                    水平展開
+                  </div>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
           </div>
         </div>
       </div>
@@ -304,6 +364,7 @@ export default {
   text-align: left;
   padding-top: 6px;
   padding-left: 6px;
+  overflow: auto;
   box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
 }
 </style>
