@@ -233,27 +233,6 @@ export default {
     padding-right: 6px;
     height: 400px;
     box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
-    /*
-    margin-right: auto;
-    margin-left: auto;
-    width: 100%;
-    border:rgba(63, 63, 63, 0.1) solid 1px;
-    */
-  }
-  .wrapper {
-    display: flex;
-    display: -webkit-flex;
-    flex-direction: row;
-    -webkit-flex-direction: row;
-  }
-  /* growable wrappers */
-  .attributes {
-    flex-grow: 0;
-    -webkit-flex-grow: 0;
-  }
-  .table-row {
-    border-bottom: 1px solid #e0e0e0;
-    border-collapse: collapse;
   }
   /* path indicator */
   .message-field {
@@ -263,11 +242,10 @@ export default {
   /* list header */
   .header-field {
     height: 150px;
-    /*
-    display: block;
-    font-size: 80%;
-    font-weight: bold;
-    */
+  }
+  .table-row {
+    border-bottom: 1px solid #e0e0e0;
+    border-collapse: collapse;
   }
   .table-row.header {
     height: 100%;
@@ -275,9 +253,6 @@ export default {
     padding-left: 6px;
     padding-right: 6px;
     background-color: rgb(229, 255, 219);
-    /*
-    font-weight: bold;
-    */
   }
   .productfilter {
     height: 30%;
@@ -321,6 +296,17 @@ export default {
   }
   .flex-inner-item {
     float: left;
+  }
+  .wrapper {
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+  }
+  /* growable wrappers */
+  .attributes {
+    flex-grow: 0;
+    -webkit-flex-grow: 0;
   }
   .wrapper.attributes.header {
     height: 35%;

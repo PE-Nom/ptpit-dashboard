@@ -54,7 +54,7 @@
       </div>
       <div class="nc-item-attachment-operation">
         <b-button
-          class="nc-item-button"
+          class="nc-item-button attachment"
           id="item-attach"
           variant="success"
           @click='attach'>
@@ -63,22 +63,28 @@
       </div>
     </div>
     <div class="nc-item-attachments">
-      <table class="attachments-info">
-        <thead class="attachments-info-header">
-          <tr class="attachments-info-tr head">
-            <th class="attachments-info-th" v-for="(val, idx) in attachmentsInfoColumns" v-bind:key=idx :class="[val]">
-              {{val}}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="attachments-info-data">
-          <tr class="attachments-info-tr data" v-for="(entry,idx) in itemdata.attachments" v-bind:key=idx>
-            <td class="attachments-info-td" v-for="(val, idx) in attachmentsInfoColumns" v-bind:key=idx :class="[val]">
-              <span>{{entry[val]}}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="header-field">
+        <div class="table-row header">
+          <div class="wrapper attributes header">
+            <div v-for="(val, idx) in attachmentsInfoColumns" v-bind:key=idx :class="[val]">
+              {{ val }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="data-field">
+        <div v-for="(entry,idx) in itemdata.attachments" v-bind:key=idx>
+          <div class="table-row data">
+            <div class="wrapper attributes data">
+              <div v-for="(val, idx) in attachmentsInfoColumns" v-bind:key=idx :class="[val]">
+                <span>
+                  {{entry[val]}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -195,36 +201,73 @@ export default {
 /*
  * 添付ファイルリスト
  */
-thead, tbody {
-    display: block;
+.nc-item-button.attachment {
+  color:rgb(255, 255, 255);
+  background-color: rgb(0, 89, 255);
 }
-tbody {
-    overflow-y: scroll;
-    height: 100px;
+/* list header */
+.table-row {
+  border-bottom: 1px solid #e0e0e0;
+  border-collapse: collapse;
 }
-.attachments-info-th {
-  height: 40px;
-  border: 1px solid #666
+.table-row.header {
+  height: 100%;
+  width: 100%;
+  padding-left: 6px;
+  padding-right: 6px;
+  color:rgb(255, 255, 255);
+  background-color: rgb(0, 89, 255);
 }
-.attachments-info-td {
+.wrapper {
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  -webkit-flex-direction: row;
+}
+.attributes {
+  flex-grow: 0;
+  -webkit-flex-grow: 0;
+}
+.wrapper.attributes.header {
+  height: 35%;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-top: 1.5vh;
+  font-weight: bold;
+}
+/* list data */
+.data-field {
+  height: 90px;
+  overflow-y: auto;
+}
+.table-row.data {
   height: 30px;
-  border: 1px solid #666
+  width: 100%;
+  padding-left: 6px;
+  padding-right: 6px;
 }
+.wrapper.attributes.data {
+  height: 100%;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-top: 6px;
+}
+
 .id {
-  width: 50px;
+  width: 5vw;
 }
 .url {
-  width: 450px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: left;
+  width: 30vw;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 .description {
-  width: 450px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: left;
+  width: 30vw;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 </style>
