@@ -63,7 +63,10 @@
               <b-collapse id="nonconformity" visible accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="nonconformity-field">
+                    <!--
                     指摘内容
+                    -->
+                    <NonConformity/>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -143,9 +146,13 @@
 <script>
 import naim from '../../models/naim.js'
 import util from '../../models/util.js'
+import NonConformity from './NonConformity'
 
 export default {
   name: 'IssueEdit',
+  components: {
+    NonConformity: NonConformity
+  },
   props: {
     issue: {
       type: Object,
