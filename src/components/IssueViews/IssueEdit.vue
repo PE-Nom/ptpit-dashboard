@@ -49,6 +49,33 @@
             disabled>
         </div>
       </div>
+      <div class ="detail-field">
+        <div class="details">
+          <div class="status-display-field">
+            登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了
+          </div>
+          <div class="content-field">
+            <div class="nonconformity-field">
+              指摘内容
+            </div>
+            <div class="correct-field">
+              修正内容
+            </div>
+            <div class="cause-field">
+              原因分析
+            </div>
+            <div class="countermeasure-field">
+              是正処置
+            </div>
+            <div class="result-field">
+              効果確認
+            </div>
+            <div class="rollout-field">
+              水平展開
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -191,19 +218,23 @@ export default {
 .edit-field {
   padding-top: 6px;
   display: grid;
-  grid-template-rows: 350px;
-  grid-template-columns: 30vw 70vw
+  grid-template-rows: 200px 150px;
+  grid-template-columns: 35vw 65vw;
+  grid-template-areas:
+    "item detail"
+    "item detail";
 }
 .item-field {
+  grid-area: item;
   padding-top: 6px;
 }
 .items {
  display: grid;
   width: 30vw;
   margin-right: auto;
-  margin-right: 10px;
-  grid-template-rows: 50px 50px 50px;
-  grid-template-columns: 8vw 22vw;
+  margin-left: 10px;
+  grid-template-rows: 50px 50px 50px 50px;
+  grid-template-columns: 10vw 20vw;
   grid-template-areas:
     "item-id-label item-id-content"
     "item-name-label item-name-content"
@@ -244,5 +275,35 @@ export default {
 }
 .issue-customer-form {
   grid-area: item-customer-content;
+}
+/*
+ * 個別の入力事項
+ */
+.detail-field {
+  grid-area: detail;
+  padding-top: 6px;
+}
+.details {
+  display: grid;
+  padding-top: 6px;
+  grid-template-rows: 50px 290px;
+  grid-template-columns: 30vw 30vw;
+  grid-template-areas:
+   "status-display-area status-display-area"
+    "detail-edit-area detail-edit-area";
+}
+.status-display-field {
+  line-height: 50px;
+  grid-area: status-display-area;
+  text-align: left;
+  padding-left: 6px;
+  box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
+}
+.content-field {
+  grid-area: detail-edit-area;
+  text-align: left;
+  padding-top: 6px;
+  padding-left: 6px;
+  box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
 }
 </style>
