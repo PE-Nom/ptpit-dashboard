@@ -171,11 +171,24 @@ export default {
     },
     editIssue (entry) {
       console.log('editIssue')
-      this.$emit('editIssue', entry.issue)
+      let issue = {
+        issue: entry.issue,
+        currentProduct: this.product
+      }
+      this.$emit('editIssue', issue)
     },
     createIssue () {
       console.log('createIssue')
-      this.$emit('createIssue')
+      let issue = {
+        issue: {
+          id: -1,
+          subject: '新規登録の件名',
+          project: {name: '新規登録時の製品名'},
+          description: '新規登録の説明'
+        },
+        currentProduct: -1
+      }
+      this.$emit('editIssue', issue)
     },
     async refreshList () {
       console.log('refreshList')

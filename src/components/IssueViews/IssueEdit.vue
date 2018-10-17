@@ -1,7 +1,7 @@
 <template>
   <div class="issue-edit">
     <div class="operation-field">
-      <b-button v-if="(issue && issue.id === -1)"
+      <b-button v-if="(issue && issue.issue.id === -1)"
         class="control-button create"
         variant="success"
         v-bind:disabled="(!issueDuty)"
@@ -16,32 +16,39 @@
         更新
       </b-button>
     </div>
-    <div edit-field>
+    <div class="edit-field">
+      <div class="item-field">
         <div class="items">
           <!-- 指摘番号 -->
-          <label class="grid-item item-label product-name-label">指摘番号</label>
+          <label class="grid-item item-label issue-id-label">指摘番号</label>
           <input type="text"
-            class="grid-item item-form product-name-form"
+            class="grid-item item-form issue-id-form"
             v-model="issueId"
             disabled >
+          <!-- 製品名 -->
+          <label class="grid-item item-label issue-name-label">製品名</label>
+            <b-form-select
+              class="grid-item item-form issue-name-form"
+              v-model="product"
+              :options="productOptions"
+              :disabled="issue && issue.issue.id !== -1"
+              @change="productChanged">
+            </b-form-select>
           <!-- 指摘件名 -->
-          <label class="grid-item item-label product-number-label">指摘件名</label>
+          <label class="grid-item item-label issue-subject-label">指摘件名</label>
           <input type="text"
-            class="grid-item item-form product-number-form"
+            class="grid-item item-form issue-subject-form"
             placeholder="指摘件名"
             v-model="issueSubject"
             @change="issueSubjectChanged">
-          <!-- 製品名 -->
-          <label class="grid-item item-label product-customer-label">客先</label>
-          <input type="text"
-            v-model="issueProduct"
-            disabled >
           <!-- 顧客情報 -->
-          <label for="inputDescription" class="grid-item item-label product-desc-label">顧客情報</label>
+          <label for="inputDescription" class="grid-item item-label issue-customer-label">顧客情報</label>
           <input type="text"
+            class="grid-item item-form issue-customer-form"
             v-model="customer"
             disabled>
         </div>
+      </div>
     </div>
   </div>
 </template>
@@ -60,9 +67,9 @@ export default {
     }
   },
   watch: {
-    async issue (newVal, oldVal) {
+    issue (newVal, oldVal) {
       console.log('detect issue selecting at IssueEdit.vue')
-      await this.setData()
+      this.setData()
     }
   },
   data () {
@@ -70,7 +77,8 @@ export default {
       issueDuty: false,
       issueId: '',
       issueSubject: '',
-      issueProduct: '',
+      product: '',
+      productOptions: [{value: '', text: ''}],
       customer: ''
     }
   },
@@ -86,31 +94,73 @@ export default {
       console.log('issueSubjectChanged')
       this.setIssueDuty()
     },
+    productChanged () {
+      this.$nextTick(function () {
+        this.productOptions.forEach(option => {
+          if (option.value === this.product) {
+            console.log('selected product is ' + option.value)
+          }
+        })
+        if (this.product !== -1) {
+          let prj = naim.getProject(this.product)
+          // console.log(res)
+          let customer = util.getProjectCustomFieldValue(prj, '顧客情報')
+          this.customer = customer
+        } else {
+          this.customer = '未定'
+        }
+        this.setIssueDuty()
+      })
+    },
     setIssueDuty () {
       this.issueDuty = true
     },
     resetIssueDuty () {
       this.issueDuty = false
     },
-    async setData () {
+    setProductOptions () {
+      console.log('setProductOptions')
+      let availableProjects = naim.getAvailableProjects()
+      console.log(availableProjects)
+      this.productOptions = []
+      this.productOptions.push({value: -1, text: '製品番号'})
+      for (let project of availableProjects) {
+        let option = {
+          value: project.id,
+          text: project.name
+        }
+        this.productOptions.push(option)
+      }
+      if (this.issue && this.issue.issue.id !== -1) {
+        this.product = this.issue.issue.project.id
+      } else {
+        this.product = this.productOptions[0].value
+      }
+    },
+    setData () {
       console.log('IssueEdit.setData')
       if (this.issue) {
-        let res = await naim.retrieveProject(this.issue.project.id)
-        console.log(res)
-        let customer = util.getProjectCustomFieldValue(res.data.project, '顧客情報')
-        this.issueId = this.issue.id
-        this.issueSubject = this.issue.subject
-        this.issueProduct = this.issue.project.name
+        console.log(this.issue)
+        let customer = '未定'
+        if (this.issue.issue.id !== -1) {
+          let prj = naim.getProject(this.issue.issue.project.id)
+          console.log(prj)
+          customer = util.getProjectCustomFieldValue(prj, '顧客情報')
+        }
+        this.issueId = this.issue.issue.id
+        this.issueSubject = this.issue.issue.subject
         this.customer = customer
+        this.setProductOptions()
+        this.resetIssueDuty()
       }
     }
   },
   created () {
     console.log('IssueEdit created')
+    this.setData()
   },
-  async mounted () {
+  mounted () {
     console.log('IssueEdit mounted')
-    await this.setData()
   }
 }
 </script>
@@ -142,6 +192,57 @@ export default {
   padding-top: 6px;
   display: grid;
   grid-template-rows: 350px;
-  grid-template-columns: 50vw 50vw
+  grid-template-columns: 30vw 70vw
+}
+.item-field {
+  padding-top: 6px;
+}
+.items {
+ display: grid;
+  width: 30vw;
+  margin-right: auto;
+  margin-right: 10px;
+  grid-template-rows: 50px 50px 50px;
+  grid-template-columns: 8vw 22vw;
+  grid-template-areas:
+    "item-id-label item-id-content"
+    "item-name-label item-name-content"
+    "item-subject-label item-subject-content"
+    "item-customer-label item-customer-content";
+}
+.grid-item {
+  height: 80%;
+  margin: 6px;
+  padding: 6px;
+}
+.item-label {
+  text-align: right;
+}
+.item-form {
+  box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
+}
+.issue-id-label {
+  grid-area: item-id-label;
+}
+.issue-id-form {
+  grid-area: item-id-content;
+}
+.issue-subject-label {
+  grid-area: item-subject-label;
+}
+.issue-subject-form {
+  grid-area: item-subject-content;
+}
+.issue-name-label {
+  grid-area: item-name-label;
+}
+.issue-name-form {
+  grid-area: item-name-content;
+}
+.issue-customer-label {
+  grid-area: item-customer-label;
+}
+.issue-customer-form {
+  grid-area: item-customer-content;
 }
 </style>

@@ -263,6 +263,15 @@ export default {
     return this.projects
     // return util.convertOptionObjs(this.projects, 'name')
   },
+  getProject (prjId) {
+    let prj = null
+    this.projects.forEach(project => {
+      if (project.id === prjId) {
+        prj = project
+      }
+    })
+    return prj
+  },
   async retrieveProject (prjId) {
     let ret = null
     try {
