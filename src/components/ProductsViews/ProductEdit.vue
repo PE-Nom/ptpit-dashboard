@@ -162,7 +162,14 @@ export default {
               naim.getCustomFieldId('是正処置'),
               naim.getCustomFieldId('効果確認'),
               naim.getCustomFieldId('水平展開'),
-              naim.getCustomFieldId('修正完了')
+              naim.getCustomFieldId('修正完了'),
+              naim.getCustomFieldId('不適合内容ステータス'),
+              naim.getCustomFieldId('修正処置ステータス'),
+              naim.getCustomFieldId('不適合原因ステータス'),
+              naim.getCustomFieldId('是正処置ステータス'),
+              naim.getCustomFieldId('効果確認ステータス'),
+              naim.getCustomFieldId('水平展開ステータス'),
+              naim.getCustomFieldId('修正完了ステータス')
             ],
             project_custom_fields: this.product.custom_fields
           }

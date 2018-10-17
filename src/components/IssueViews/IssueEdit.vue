@@ -17,15 +17,39 @@
       </b-button>
     </div>
     <div edit-field>
-      {{issueId}}<br>
-      {{issueSubject}}<br>
-      {{issueProduct}}<br>
-      {{issueDescription}}<br>
+        <div class="items">
+          <!-- 指摘番号 -->
+          <label class="grid-item item-label product-name-label">指摘番号</label>
+          <input type="text"
+            class="grid-item item-form product-name-form"
+            v-model="issueId"
+            disabled >
+          <!-- 指摘件名 -->
+          <label class="grid-item item-label product-number-label">指摘件名</label>
+          <input type="text"
+            class="grid-item item-form product-number-form"
+            placeholder="指摘件名"
+            v-model="issueSubject"
+            @change="issueSubjectChanged">
+          <!-- 製品名 -->
+          <label class="grid-item item-label product-customer-label">客先</label>
+          <input type="text"
+            v-model="issueProduct"
+            disabled >
+          <!-- 顧客情報 -->
+          <label for="inputDescription" class="grid-item item-label product-desc-label">顧客情報</label>
+          <input type="text"
+            v-model="customer"
+            disabled>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
+import naim from '../../models/naim.js'
+import util from '../../models/util.js'
+
 export default {
   name: 'IssueEdit',
   props: {
@@ -36,9 +60,9 @@ export default {
     }
   },
   watch: {
-    issue (newVal, oldVal) {
+    async issue (newVal, oldVal) {
       console.log('detect issue selecting at IssueEdit.vue')
-      this.setData()
+      await this.setData()
     }
   },
   data () {
@@ -47,7 +71,7 @@ export default {
       issueId: '',
       issueSubject: '',
       issueProduct: '',
-      issueDescription: ''
+      customer: ''
     }
   },
   methods: {
@@ -58,28 +82,35 @@ export default {
     updateInfo () {
       console.log('updateInfo')
     },
+    issueSubjectChanged () {
+      console.log('issueSubjectChanged')
+      this.setIssueDuty()
+    },
     setIssueDuty () {
       this.issueDuty = true
     },
     resetIssueDuty () {
       this.issueDuty = false
     },
-    setData () {
+    async setData () {
       console.log('IssueEdit.setData')
       if (this.issue) {
+        let res = await naim.retrieveProject(this.issue.project.id)
+        console.log(res)
+        let customer = util.getProjectCustomFieldValue(res.data.project, '顧客情報')
         this.issueId = this.issue.id
         this.issueSubject = this.issue.subject
         this.issueProduct = this.issue.project.name
-        this.issueDescription = this.issue.description
+        this.customer = customer
       }
     }
   },
   created () {
     console.log('IssueEdit created')
   },
-  mounted () {
+  async mounted () {
     console.log('IssueEdit mounted')
-    this.setData()
+    await this.setData()
   }
 }
 </script>

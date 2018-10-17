@@ -268,8 +268,8 @@ export default {
     try {
       if (redmine.isConfigured()) {
         ret = await redmine.project(prjId, {}, res => {
-          console.log('==== Create Project @ naim ====')
-          console.log(res)
+          // console.log('==== retrieve Project @ naim ====')
+          // console.log(res)
         })
         return ret
       }

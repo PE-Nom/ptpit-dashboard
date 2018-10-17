@@ -60,5 +60,16 @@ export default {
     var d = ('00' + dt.getDate()).slice(-2)
     var result = y + '-' + m + '-' + d
     return result
+  },
+
+  // Project の操作
+  getProjectCustomFieldValue (prj, fieldName) {
+    let value
+    prj.custom_fields.forEach(field => {
+      if (field.name === fieldName) {
+        value = field.value
+      }
+    })
+    return value
   }
 }
