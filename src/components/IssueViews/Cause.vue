@@ -1,5 +1,5 @@
 <template>
-  <div class="nonconformity">
+  <div class="cause">
     <NonConformityItem :itemdata="itemdata"></NonConformityItem>
   </div>
 </template>
@@ -7,15 +7,15 @@
 <script>
 import NonConformityItem from './NonConformityItem'
 export default {
-  name: 'NonConformity',
+  name: 'Cause',
   components: {
     NonConformityItem: NonConformityItem
   },
   data () {
     let itemdata = {
-      name: '指摘内容',
+      name: '不適合原因',
       state: 0,
-      content: 'ここに指摘の詳細を記述する。',
+      content: 'ここに不適合発生、混入の原因分析結果を記述する。',
       attachments: [
         {
           id: 1,

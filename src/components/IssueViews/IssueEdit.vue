@@ -63,9 +63,6 @@
               <b-collapse id="nonconformity" visible accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="nonconformity-field">
-                    <!--
-                    指摘内容
-                    -->
                     <NonConformity/>
                   </div>
                 </b-card-body>
@@ -79,7 +76,7 @@
               <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="correct-field">
-                    修正内容
+                    <Correct/>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -92,7 +89,7 @@
               <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="cause-field">
-                    原因分析
+                    <Cause/>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -105,7 +102,7 @@
               <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="countermeasure-field">
-                    是正処置
+                    <CounterMeasure/>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -118,7 +115,7 @@
               <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="result-field">
-                    効果確認
+                    <Result/>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -131,7 +128,7 @@
               <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="rollout-field">
-                    水平展開
+                    <RollOut/>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -147,11 +144,21 @@
 import naim from '../../models/naim.js'
 import util from '../../models/util.js'
 import NonConformity from './NonConformity'
+import Correct from './Correct.vue'
+import Cause from './Cause.vue'
+import CounterMeasure from './CounterMeasure.vue'
+import Result from './Result.vue'
+import RollOut from './RollOut.vue'
 
 export default {
   name: 'IssueEdit',
   components: {
-    NonConformity: NonConformity
+    NonConformity: NonConformity,
+    Correct: Correct,
+    Cause: Cause,
+    CounterMeasure: CounterMeasure,
+    Result: Result,
+    RollOut: RollOut
   },
   props: {
     issue: {
