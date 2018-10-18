@@ -199,7 +199,7 @@ export default {
       })
   },
   async getIssue (issId, callback) {
-    console.log('getIssue @ redmine.js')
+    // console.log('getIssue @ redmine.js')
     await this.rmc.get('/issues/' + issId + '.json?include=attachments,journals')
       .then(res => {
         callback(res)

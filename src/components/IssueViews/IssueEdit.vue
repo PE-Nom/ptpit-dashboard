@@ -55,41 +55,41 @@
             登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了
           </div>
           <div class="content-field">
-            <!-- 指摘内容 -->
+            <!-- 不適合内容 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.nonconformity variant="info">指摘内容</b-btn>
+                <b-btn block href="#" v-b-toggle.nonconformity variant="info">不適合内容</b-btn>
               </b-card-header>
               <b-collapse id="nonconformity" visible accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="nonconformity-field">
-                    <NonConformity/>
+                    <NonConformity :itemdata="itemdata[0]"></NonConformity>
                   </div>
                 </b-card-body>
               </b-collapse>
             </b-card>
-            <!-- 修正内容 -->
+            <!-- 修正処置 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.correct variant="info">修正内容</b-btn>
+                <b-btn block href="#" v-b-toggle.correct variant="info">修正処置</b-btn>
               </b-card-header>
               <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="correct-field">
-                    <Correct/>
+                    <Correct :itemdata="itemdata[1]"></Correct>
                   </div>
                 </b-card-body>
               </b-collapse>
             </b-card>
-            <!-- 原因分析 -->
+            <!-- 不適合原因 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.cause variant="info">原因分析</b-btn>
+                <b-btn block href="#" v-b-toggle.cause variant="info">不適合原因</b-btn>
               </b-card-header>
               <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="cause-field">
-                    <Cause/>
+                    <Cause :itemdata="itemdata[2]"></Cause>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -102,7 +102,7 @@
               <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="countermeasure-field">
-                    <CounterMeasure/>
+                    <CounterMeasure :itemdata="itemdata[3]"></CounterMeasure>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -115,7 +115,7 @@
               <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="result-field">
-                    <Result/>
+                    <Result :itemdata="itemdata[4]"></Result>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -128,7 +128,7 @@
               <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="rollout-field">
-                    <RollOut/>
+                    <RollOut :itemdata="itemdata[5]"></RollOut>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -174,13 +174,30 @@ export default {
     }
   },
   data () {
+    let issDetailItems = [
+      {name: '不適合内容', statusName: '不適合内容ステータス'},
+      {name: '修正処置', statusName: '修正処置ステータス'},
+      {name: '不適合原因', statusName: '不適合原因ステータス'},
+      {name: '是正処置', statusName: '是正処置ステータス'},
+      {name: '効果確認', statusName: '効果確認ステータス'},
+      {name: '水平展開', statusName: '水平展開ステータス'}
+    ]
+    let issDetailInfoStatusValue = {
+      '入力待ち': 0,
+      '承認待ち': 1,
+      '完了': 2
+    }
     return {
       issueDuty: false,
       issueId: '',
       issueSubject: '',
       product: '',
       productOptions: [{value: '', text: ''}],
-      customer: ''
+      customer: '',
+      issDetailItems: issDetailItems,
+      issDetailInfoStatusValue: issDetailInfoStatusValue,
+      issDetail: null,
+      itemdata: []
     }
   },
   methods: {
@@ -238,20 +255,69 @@ export default {
         this.product = this.productOptions[0].value
       }
     },
-    setData () {
+    setIssDetail () {
+      console.log('setIssDetail')
+      console.log(this.issDetail)
+      if (this.issDetail) {
+        // 添付ファイルリスト
+        let issueAttachments = []
+        this.issDetail.attachments.forEach(el => {
+          let item = {
+            filename: el.filename,
+            filesize: parseInt(el.filesize / 1000) + 'kbyte',
+            description: el.description,
+            content_type: el.content_type,
+            content_url: el.content_url,
+            id: el.id
+          }
+          issueAttachments.push(item)
+        })
+        // Detail オブジェクトの生成
+        this.itemdata = []
+        this.issDetailItems.forEach(item => {
+          let customFieldForName = util.getCustomFieldByName(this.issDetail.custom_fields, item.name)
+          let state = 0
+          let customFieldForStatus = util.getCustomFieldByName(this.issDetail.custom_fields, item.statusName)
+          if (item.statusName !== '修正処置ステータス') {
+            state = this.issDetailInfoStatusValue[customFieldForStatus.value]
+          } else {
+            state = customFieldForStatus.value
+          }
+          // 添付ファイルを検索し、ファイル名に項目名を含む添付ファイルを抽出する。
+          let itemAttachments = issueAttachments.filter(attachment => {
+            return attachment.filename.indexOf(item.name) !== -1
+          })
+          let itemdata = {
+            name: customFieldForName.name,
+            state: state,
+            content: customFieldForName.value,
+            attachments: itemAttachments
+          }
+          console.log(itemdata)
+          this.itemdata.push(itemdata)
+        })
+      }
+    },
+    async setData () {
       console.log('IssueEdit.setData')
       if (this.issue) {
         console.log(this.issue)
-        let customer = '未定'
+        let customer = ''
         if (this.issue.issue.id !== -1) {
           let prj = naim.getProject(this.issue.issue.project.id)
-          console.log(prj)
+          // console.log(prj)
           customer = util.getProjectCustomFieldValue(prj, '顧客情報')
+          this.issDetail = await naim.getIssueDetail(this.issue.issue.id)
+          console.log(this.issDetail)
+        } else {
+          customer = '未定'
+          this.issDetail = null
         }
         this.issueId = this.issue.issue.id
         this.issueSubject = this.issue.issue.subject
         this.customer = customer
         this.setProductOptions()
+        this.setIssDetail()
         this.resetIssueDuty()
       }
     }

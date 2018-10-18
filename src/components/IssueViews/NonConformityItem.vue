@@ -94,20 +94,50 @@ export default {
   name: 'NonConformityItem',
   props: {
     itemdata: {
-      name: '',
-      state: 0,
-      content: '',
+      name: {
+        type: String,
+        default: ''
+      },
+      state: {
+        type: Number,
+        default: 0
+      },
+      content: {
+        type: String,
+        default: ''
+      },
       attachments: [
         {
-          id: '',
-          url: '',
-          description: ''
+          filename: {
+            type: String,
+            default: ''
+          },
+          filesize: {
+            type: String,
+            default: ''
+          },
+          description: {
+            type: String,
+            default: ''
+          },
+          content_type: {
+            type: String,
+            default: ''
+          },
+          content_url: {
+            type: String,
+            default: ''
+          },
+          id: {
+            type: Number,
+            default: 0
+          }
         }
       ]
     }
   },
   data () {
-    let attachmentsInfoColumns = ['id', 'url', 'description']
+    let attachmentsInfoColumns = ['id', 'filename', 'description']
     return {
       attachmentsInfoColumns: attachmentsInfoColumns
     }
@@ -256,7 +286,7 @@ export default {
 .id {
   width: 5vw;
 }
-.url {
+.filename {
   width: 30vw;
   overflow: hidden;
   white-space: nowrap;

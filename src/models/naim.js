@@ -436,18 +436,12 @@ export default {
   },
 
   // redmineに問い合わせ
-  retrieveIssueDetail: async function (issId) {
+  async retrieveIssueDetail (issId) {
     try {
       await redmine.getIssue(issId, res => {
         // console.log('==== Issue Detail @ naim ====')
         // console.log(res)
-        let storageKey = 'issue-' + issId
-        console.log('storageKey = ' + storageKey)
         this.issueDetail = res.data.issue
-        localStorage.removeItem(storageKey)
-        localStorage.setItem(storageKey, JSON.stringify(this.issueDetail))
-        console.log(this.issueDetail)
-        // return issueDetail
       })
     } catch (err) {
       console.log('==== Issue Detail @ naim ====')
@@ -463,7 +457,7 @@ export default {
       this.issueDetail = null
     }
   },
-  getIssueDetail: async function (issId) {
+  async getIssueDetail (issId) {
     await this.retrieveIssueDetail(issId)
     return this.issueDetail
   },

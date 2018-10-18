@@ -71,5 +71,16 @@ export default {
       }
     })
     return value
+  },
+
+  // IssueDetail の customFiels検索
+  getCustomFieldByName (customField, fieldName) {
+    let ret = null
+    customField.forEach(field => {
+      if (field.name === fieldName) {
+        ret = field
+      }
+    })
+    return ret
   }
 }

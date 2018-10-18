@@ -11,6 +11,24 @@ export default {
   components: {
     NonConformityItem: NonConformityItem
   },
+  props: {
+    itemdata: {
+      name: '',
+      state: 0,
+      content: '',
+      attachments: [
+        {
+          filename: '',
+          filesize: '',
+          description: '',
+          content_type: '',
+          content_url: '',
+          id: ''
+        }
+      ]
+    }
+  }
+  /*
   data () {
     let itemdata = {
       name: '修正内容',
@@ -43,5 +61,6 @@ export default {
       itemdata: itemdata
     }
   }
+  */
 }
 </script>

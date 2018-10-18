@@ -163,7 +163,7 @@ export default {
         if (this.product === -1) {
           this.filteredIssues = this.issues.slice(0)
         } else {
-          this.filteredIssues = this.issues.filter(function (issue) {
+          this.filteredIssues = this.issues.filter(issue => {
             return issue.project.name === productName
           })
         }
