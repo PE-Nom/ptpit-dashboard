@@ -308,22 +308,45 @@ export default {
           // console.log(prj)
           customer = util.getProjectCustomFieldValue(prj, '顧客情報')
           this.issDetail = await naim.getIssueDetail(this.issue.issue.id)
+          this.setIssDetail()
           console.log(this.issDetail)
         } else {
           customer = '未定'
           this.issDetail = null
+          this.initializeProps()
         }
         this.issueId = this.issue.issue.id
         this.issueSubject = this.issue.issue.subject
         this.customer = customer
         this.setProductOptions()
-        this.setIssDetail()
         this.resetIssueDuty()
+      }
+    },
+    initializeProps () {
+      let itemdata = {
+        name: '',
+        state: 0,
+        content: '',
+        attachments: [
+          {
+            filename: '',
+            filesize: '',
+            description: '',
+            content_type: '',
+            content_url: '',
+            id: ''
+          }
+        ]
+      }
+      this.itemdata = []
+      for (let i = 0; i < this.issDetailItems.length; i++) {
+        this.itemdata.push(Object.assign({}, itemdata))
       }
     }
   },
   created () {
     console.log('IssueEdit created')
+    this.initializeProps()
     this.setData()
   },
   mounted () {
