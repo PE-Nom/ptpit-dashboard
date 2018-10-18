@@ -323,23 +323,23 @@ export default {
       }
     },
     initializeProps () {
-      let itemdata = {
-        name: '',
-        state: 0,
-        content: '',
-        attachments: [
-          {
-            filename: '',
-            filesize: '',
-            description: '',
-            content_type: '',
-            content_url: '',
-            id: ''
-          }
-        ]
-      }
       this.itemdata = []
       for (let i = 0; i < this.issDetailItems.length; i++) {
+        let itemdata = {
+          name: this.issDetailItems[i].name,
+          state: 0,
+          content: '詳細を記述する欄',
+          attachments: [
+            {
+              filename: '',
+              filesize: '',
+              description: '',
+              content_type: '',
+              content_url: '',
+              id: ''
+            }
+          ]
+        }
         this.itemdata.push(Object.assign({}, itemdata))
       }
     }
