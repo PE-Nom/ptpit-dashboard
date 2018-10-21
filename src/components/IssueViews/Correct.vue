@@ -2,6 +2,7 @@
   <div class="correct">
     <NonConformityItem
       :itemdata="itemdata"
+      :disabled="disabled"
       @enter="enter"
       @reject="reject"
       @accept="accept"
@@ -20,7 +21,8 @@ export default {
     NonConformityItem: NonConformityItem
   },
   props: {
-    itemdata: null
+    itemdata: null,
+    disabled: false
   },
   methods: {
     enter (itemdata) {

@@ -65,6 +65,7 @@
                   <div class="nonconformity-field">
                     <NonConformity
                       :itemdata="itemdata[0]"
+                      :disabled="stateNonconformity"
                       @enter="enter"
                       @reject="reject"
                       @accept="accept"
@@ -86,6 +87,7 @@
                   <div class="correct-field">
                     <Correct
                       :itemdata="itemdata[1]"
+                      :disabled="stateCorrect"
                       @enter="enter"
                       @reject="reject"
                       @accept="accept"
@@ -107,6 +109,7 @@
                   <div class="cause-field">
                     <Cause
                       :itemdata="itemdata[2]"
+                      :disabled="stateCause"
                       @enter="enter"
                       @reject="reject"
                       @accept="accept"
@@ -128,6 +131,7 @@
                   <div class="countermeasure-field">
                     <CounterMeasure
                       :itemdata="itemdata[3]"
+                      :disabled="stateCounterMeasure"
                       @enter="enter"
                       @reject="reject"
                       @accept="accept"
@@ -149,6 +153,7 @@
                   <div class="result-field">
                     <Result
                       :itemdata="itemdata[4]"
+                      :disabled="stateResult"
                       @enter="enter"
                       @reject="reject"
                       @accept="accept"
@@ -170,6 +175,7 @@
                   <div class="rollout-field">
                     <RollOut
                       :itemdata="itemdata[5]"
+                      :disabled="stateRollOut"
                       @enter="enter"
                       @reject="reject"
                       @accept="accept"
@@ -221,14 +227,42 @@ export default {
       this.setData()
     }
   },
+  computed: {
+    stateNonconformity () {
+      return (this.issDetail && this.issDetail.status.name === this.issStatus[0].name)
+    },
+    stateCorrect () {
+      return (this.issDetail && this.issDetail.status.name === this.issStatus[0].name)
+    },
+    stateCause () {
+      return (this.issDetail && this.issDetail.status.name === this.issStatus[1].name)
+    },
+    stateCounterMeasure () {
+      return (this.issDetail && this.issDetail.status.name === this.issStatus[2].name)
+    },
+    stateResult () {
+      return (this.issDetail && this.issDetail.status.name === this.issStatus[3].name)
+    },
+    stateRollOut () {
+      return (this.issDetail && (this.issDetail.status.name === this.issStatus[4].name || this.issDetail.status.name === this.issStatus[4].name))
+    }
+  },
   data () {
+    let issStatus = [
+      '登録',
+      '原因分析',
+      '是正処置',
+      '効果確認',
+      '水平展開',
+      '完了'
+    ]
     let issDetailItems = [
-      {name: '不適合内容', statusName: '不適合内容ステータス'},
-      {name: '修正処置', statusName: '修正処置ステータス'},
-      {name: '不適合原因', statusName: '不適合原因ステータス'},
-      {name: '是正処置', statusName: '是正処置ステータス'},
-      {name: '効果確認', statusName: '効果確認ステータス'},
-      {name: '水平展開', statusName: '水平展開ステータス'}
+      {name: '不適合内容', statusName: '不適合内容ステータス', conditions: {accept: '登録', cancel: '原因分析'}},
+      {name: '修正処置', statusName: '修正処置ステータス', conditions: {accept: '登録', cancel: '原因分析'}},
+      {name: '不適合原因', statusName: '不適合原因ステータス', conditions: {accept: '原因分析', cancel: '是正処置'}},
+      {name: '是正処置', statusName: '是正処置ステータス', conditions: {accept: '是正処置', cancel: '効果確認'}},
+      {name: '効果確認', statusName: '効果確認ステータス', conditions: {accept: '効果確認', cancel: '水平展開'}},
+      {name: '水平展開', statusName: '水平展開ステータス', conditions: {accept: '水平展開', cancel: '完了'}}
     ]
     let issDetailInfoStatusValue = {
       '入力待ち': 0,
@@ -236,6 +270,7 @@ export default {
       '完了': 2
     }
     return {
+      issStatus: issStatus,
       issueDuty: false,
       issueId: '',
       issueSubject: '',
@@ -255,6 +290,14 @@ export default {
       })
       console.log(idx)
       return idx
+    },
+    // ステータスを進める
+    forwardState (idx) {
+
+    },
+    // ステータスを戻す
+    backwardState (idx) {
+
     },
     // 確定
     enter (itemdata) {
@@ -282,6 +325,7 @@ export default {
       let idx = this.findItemIndex(itemdata)
       this.itemdata[idx].state = this.issDetailInfoStatusValue['完了']
       // ステータスを進める
+      this.forwardState(idx)
       this.setIssueDuty()
     },
     // 取り消し
@@ -292,6 +336,7 @@ export default {
       let idx = this.findItemIndex(itemdata)
       this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
       // ステータスを戻す
+      this.backwardState(idx)
       this.setIssueDuty()
     },
     // 記述内容の編集
