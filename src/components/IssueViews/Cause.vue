@@ -1,6 +1,14 @@
 <template>
   <div class="cause">
-    <NonConformityItem :itemdata="itemdata"></NonConformityItem>
+    <NonConformityItem
+      :itemdata="itemdata"
+      @enter="enter"
+      @reject="reject"
+      @accept="accept"
+      @cancel="cancel"
+      @attach="attach"
+      @contentChanged="contentChanged">
+    </NonConformityItem>
   </div>
 </template>
 
@@ -13,6 +21,32 @@ export default {
   },
   props: {
     itemdata: null
+  },
+  methods: {
+    enter (itemdata) {
+      console.log('Cause.enter')
+      this.$emit('enter', itemdata)
+    },
+    reject (itemdata) {
+      console.log('Cause.reject')
+      this.$emit('reject', itemdata)
+    },
+    accept (itemdata) {
+      console.log('Cause.accept')
+      this.$emit('accept', itemdata)
+    },
+    cancel (itemdata) {
+      console.log('Cause.cancel')
+      this.$emit('cancel', itemdata)
+    },
+    contentChanged (itemdata) {
+      console.log('Cause.contentChanged')
+      this.$emit('contentChanged', itemdata)
+    },
+    attach (itemdata) {
+      console.log('Cause.attach')
+      this.$emit('attach', itemdata)
+    }
   }
 }
 </script>

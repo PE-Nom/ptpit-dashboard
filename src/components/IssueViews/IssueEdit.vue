@@ -63,7 +63,15 @@
               <b-collapse id="nonconformity" visible accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="nonconformity-field">
-                    <NonConformity :itemdata="itemdata[0]"></NonConformity>
+                    <NonConformity
+                      :itemdata="itemdata[0]"
+                      @enter="enter"
+                      @reject="reject"
+                      @accept="accept"
+                      @cancel="cancel"
+                      @attach="attach"
+                      @contentChanged="contentChanged">
+                    </NonConformity>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -76,7 +84,15 @@
               <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="correct-field">
-                    <Correct :itemdata="itemdata[1]"></Correct>
+                    <Correct
+                      :itemdata="itemdata[1]"
+                      @enter="enter"
+                      @reject="reject"
+                      @accept="accept"
+                      @cancel="cancel"
+                      @attach="attach"
+                      @contentChanged="contentChanged">
+                    </Correct>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -89,7 +105,15 @@
               <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="cause-field">
-                    <Cause :itemdata="itemdata[2]"></Cause>
+                    <Cause
+                      :itemdata="itemdata[2]"
+                      @enter="enter"
+                      @reject="reject"
+                      @accept="accept"
+                      @cancel="cancel"
+                      @attach="attach"
+                      @contentChanged="contentChanged">
+                    </Cause>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -102,7 +126,15 @@
               <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="countermeasure-field">
-                    <CounterMeasure :itemdata="itemdata[3]"></CounterMeasure>
+                    <CounterMeasure
+                      :itemdata="itemdata[3]"
+                      @enter="enter"
+                      @reject="reject"
+                      @accept="accept"
+                      @cancel="cancel"
+                      @attach="attach"
+                      @contentChanged="contentChanged">
+                    </CounterMeasure>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -115,7 +147,15 @@
               <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="result-field">
-                    <Result :itemdata="itemdata[4]"></Result>
+                    <Result
+                      :itemdata="itemdata[4]"
+                      @enter="enter"
+                      @reject="reject"
+                      @accept="accept"
+                      @cancel="cancel"
+                      @attach="attach"
+                      @contentChanged="contentChanged">
+                    </Result>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -128,7 +168,15 @@
               <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="rollout-field">
-                    <RollOut :itemdata="itemdata[5]"></RollOut>
+                    <RollOut
+                      :itemdata="itemdata[5]"
+                      @enter="enter"
+                      @reject="reject"
+                      @accept="accept"
+                      @cancel="cancel"
+                      @attach="attach"
+                      @contentChanged="contentChanged">
+                    </RollOut>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -201,9 +249,68 @@ export default {
     }
   },
   methods: {
+    findItemIndex (itemdata) {
+      let idx = this.itemdata.findIndex(item => {
+        return item.name === itemdata.name
+      })
+      console.log(idx)
+      return idx
+    },
+    // 確定
+    enter (itemdata) {
+      console.log('IssuEdit.enter')
+      console.log(itemdata)
+      // 入力待ち -> 承認待ち に遷移させる
+      let idx = this.findItemIndex(itemdata)
+      this.itemdata[idx].state = this.issDetailInfoStatusValue['承認待ち']
+      this.setIssueDuty()
+    },
+    // 差戻し
+    reject (itemdata) {
+      console.log('IssuEdit.reject')
+      console.log(itemdata)
+      // 承認待ち -> 入力待ち に遷移させる
+      let idx = this.findItemIndex(itemdata)
+      this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
+      this.setIssueDuty()
+    },
+    // 承認
+    accept (itemdata) {
+      console.log('IssuEdit.accept')
+      console.log(itemdata)
+      // 承認待ち -> 完了 に遷移させる
+      let idx = this.findItemIndex(itemdata)
+      this.itemdata[idx].state = this.issDetailInfoStatusValue['完了']
+      // ステータスを進める
+      this.setIssueDuty()
+    },
+    // 取り消し
+    cancel (itemdata) {
+      console.log('IssuEdit.cancel')
+      console.log(itemdata)
+      // 完了 -> 入力待ち に遷移させる
+      let idx = this.findItemIndex(itemdata)
+      this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
+      // ステータスを戻す
+      this.setIssueDuty()
+    },
+    // 記述内容の編集
+    contentChanged (itemdata) {
+      console.log('IssuEdit.contentChanged')
+      console.log(itemdata)
+      // 編集内容を反映
+      let idx = this.findItemIndex(itemdata)
+      this.itemdata[idx].content = itemdata.content
+      this.setIssueDuty()
+    },
+    // 添付ファイル追加
+    attach (itemdata) {
+      console.log('IssuEdit.enter')
+      console.log(itemdata)
+      this.setIssueDuty()
+    },
     createInfo () {
       console.log('createInfo')
-      this.$emit('reloadRequest')
     },
     updateInfo () {
       console.log('updateInfo')
@@ -360,7 +467,7 @@ export default {
   margin-top: 6px;
   padding-left: 6px;
   padding-right: 6px;
-  height: 440px;
+  height: 570px;
   box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
   /*
   margin-right: auto;
@@ -449,7 +556,7 @@ export default {
 .details {
   display: grid;
   padding-top: 6px;
-  grid-template-rows: 50px 290px;
+  grid-template-rows: 50px 420px;
   grid-template-columns: 30vw 30vw;
   grid-template-areas:
    "status-display-area status-display-area"

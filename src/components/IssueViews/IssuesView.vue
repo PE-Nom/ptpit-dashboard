@@ -41,6 +41,6 @@ export default {
   margin-right: auto;
   margin-top: 6px;
   width: 98%;
-  height: 850px;
+  height: 980px;
 }
 </style>

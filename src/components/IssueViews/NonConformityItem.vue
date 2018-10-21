@@ -156,21 +156,27 @@ export default {
   methods: {
     enter () {
       console.log('NonConformitytem.enter')
+      this.$emit('enter', this.itemdata)
     },
     accept () {
       console.log('NonConformitytem.accept')
+      this.$emit('accept', this.itemdata)
     },
     reject () {
       console.log('NonConformitytem.reject')
+      this.$emit('reject', this.itemdata)
     },
     cancel () {
       console.log('NonConformitytem.cancel')
+      this.$emit('cancel', this.itemdata)
     },
     contentChanged () {
       console.log('NonConformitytem.contentChanged')
+      this.$emit('contentChanged', this.itemdata)
     },
     attach () {
       console.log('NonConformitytem.attach')
+      this.$emit('attach', this.itemdata)
     }
   },
   created () {
