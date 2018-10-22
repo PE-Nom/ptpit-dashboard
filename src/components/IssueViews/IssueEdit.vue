@@ -404,7 +404,8 @@ export default {
             description: el.description,
             content_type: el.content_type,
             content_url: el.content_url,
-            id: el.id
+            id: el.id,
+            attachment: null
           }
           issueAttachments.push(item)
         })
@@ -419,6 +420,7 @@ export default {
             return attachment.filename.indexOf(item.name) !== -1
           })
           let itemdata = {
+            id: this.issDetail.id,
             name: customFieldForName.name,
             state: this.issDetailInfoStatusValue[customFieldForStatus.value],
             content: customFieldForName.value,
@@ -459,6 +461,7 @@ export default {
       this.itemdata = []
       for (let i = 0; i < this.issDetailItems.length; i++) {
         let itemdata = {
+          id: '***',
           name: this.issDetailItems[i].name,
           state: 0,
           content: '詳細を記述する欄',
@@ -469,7 +472,8 @@ export default {
               description: '',
               content_type: '',
               content_url: '',
-              id: ''
+              id: '',
+              attachment: null
             }
           ],
           conditions: {

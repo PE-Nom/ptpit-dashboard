@@ -83,9 +83,8 @@
           <div class="table-row data">
             <div class="wrapper attributes data">
               <div v-for="(val, idx) in attachmentsInfoColumns" v-bind:key=idx :class="[val]">
-                <span>
-                  {{entry[val]}}
-                </span>
+                <a href="#!" v-if="val==='filename'" v-on:click="previewAttachment(entry)">{{entry[val]}}</a>
+                <span v-else>{{entry[val]}}</span>
               </div>
             </div>
           </div>
@@ -100,6 +99,7 @@
 </template>
 
 <script>
+import config from '../../config.js'
 import AttachmentDialog from './AttachmentDialog.vue'
 export default {
   name: 'NonConformityItem',
@@ -108,6 +108,10 @@ export default {
   },
   props: {
     itemdata: {
+      id: {
+        type: String,
+        default: ''
+      },
       name: {
         type: String,
         default: ''
@@ -145,6 +149,10 @@ export default {
           id: {
             type: Number,
             default: 0
+          },
+          attachment: {
+            type: Object,
+            default: null
           }
         }
       ],
@@ -240,6 +248,20 @@ export default {
       attachment.name = this.itemdata.name
       console.log(attachment)
       this.$emit('attach', attachment)
+    },
+    previewAttachment: function (attachment) {
+      console.log('select attachment :')
+      console.log('  filename :' + attachment.filename)
+      console.log('  content_type : ' + attachment.content_type)
+      console.log('  content_url : ' + attachment.content_url)
+      console.log('  id : ' + attachment.id)
+      if (attachment.attachment !== null) {
+        let contentUrl = URL.createObjectURL(attachment.attachment.file)
+        window.open(contentUrl)
+      } else {
+        let contentUrl = config.BaseURL + '/data/' + this.itemdata.id + '/' + attachment.id + '_' + attachment.filename
+        window.open(contentUrl)
+      }
     }
   },
   created () {
