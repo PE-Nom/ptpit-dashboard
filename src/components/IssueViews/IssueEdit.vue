@@ -69,7 +69,8 @@
             class="grid-item item-form issue-assigned-form"
             v-model="assigned"
             :disabled="this.product===-1"
-            :options="membershipOptions">
+            :options="membershipOptions"
+            @change="memberChanged">
           </b-form-select>
         </div>
       </div>
@@ -271,12 +272,14 @@ export default {
       '承認待ち': 1,
       '完了': 2
     }
+    let issDetailInfoStatusName = ['入力待ち', '承認待ち', '完了']
     return {
       dateFormat: 'YYYY-MM-DD',
       currentDate: '2018-07-25',
       minDate: '2018-01-01',
       maxDate: '2030-12-31',
       due_date: '2018-08-11',
+      start_date: '',
       created_on: '',
       assigned: '',
       updating: false,
@@ -291,6 +294,7 @@ export default {
       customer: '',
       issDetailItems: issDetailItems,
       issDetailInfoStatusValue: issDetailInfoStatusValue,
+      issDetailInfoStatusName: issDetailInfoStatusName,
       issDetail: null,
       itemdata: [],
       attachmentFiles: []
@@ -409,46 +413,60 @@ export default {
         }
       }
     },
+    */
     createQueryString: function () {
       let qobj = {
-        'issue': {
-          'subject': this.issueSubject, // subject
-          'priority_id': naim.getIssuePriorityByName('通常'), // priority Object
-          'status_id': naim.getIssueStatusIdByName(this.issStatus), // status Object
+        issue: {
+          subject: this.issueSubject, // subject
+          priority_id: naim.getIssuePriorityByName('通常'), // priority Object
+          status_id: naim.getIssueStatusIdByName(this.issStatus), // status Object
           // ----------------------
-          'tracker_id': naim.getTrackerIdByName('不適合'), // tracker Object
-          'project_id': this.product, // project Object
-          'description': '', // description
+          tracker_id: naim.getTrackerIdByName('不適合'), // tracker Object
+          project_id: this.product, // project Object
+          description: '', // description
           // ----------------------
-          'start_date': '', // start_date
-          'due_date': '', // due_date
-          'done_ratio': '', // done_ratio
+          start_date: this.start_date, // start_date
+          due_date: this.due_date, // due_date
+          done_ratio: '', // done_ratio
           // ----------------------
-          'assigned_to_id': this.assigned, // assigned_to Object
+          assigned_to_id: this.assigned, // assigned_to Object
           // ----------------------
           // activity
           // workingTime
           // comment
           // 'notes': this.notation, // notation
-          'custom_fields': [{ id: naim.findCustomFieldId('巡視場所'), 'value': this.site }]
+          custom_fields: [
+            { id: naim.getCustomFieldId('不適合内容'), value: this.itemdata[0].content },
+            { id: naim.getCustomFieldId('修正処置'), value: this.itemdata[1].content },
+            { id: naim.getCustomFieldId('不適合原因'), value: this.itemdata[2].content },
+            { id: naim.getCustomFieldId('是正処置'), value: this.itemdata[3].content },
+            { id: naim.getCustomFieldId('効果確認'), value: this.itemdata[4].content },
+            { id: naim.getCustomFieldId('水平展開'), value: this.itemdata[5].content },
+            { id: naim.getCustomFieldId('不適合内容ステータス'), value: this.issDetailInfoStatusName[this.itemdata[0].state] },
+            { id: naim.getCustomFieldId('修正処置ステータス'), value: this.issDetailInfoStatusName[this.itemdata[1].state] },
+            { id: naim.getCustomFieldId('不適合原因ステータス'), value: this.issDetailInfoStatusName[this.itemdata[2].state] },
+            { id: naim.getCustomFieldId('是正処置ステータス'), value: this.issDetailInfoStatusName[this.itemdata[3].state] },
+            { id: naim.getCustomFieldId('効果確認ステータス'), value: this.issDetailInfoStatusName[this.itemdata[4].state] },
+            { id: naim.getCustomFieldId('水平展開ステータス'), value: this.issDetailInfoStatusName[this.itemdata[5].state] }
+          ]
         }
       }
       return qobj
     },
-    */
-    updateInfo () {
+    async updateInfo () {
       console.log('updateInfo')
-      /*
       this.updating = true
       let qobj = this.createQueryString()
-      await naim.updateIssue(this.issId, qobj)
+      await naim.updateIssue(this.issueId, qobj)
       await naim.retrieveIssues()
       console.log(qobj)
+      /*
       if (this.mediaData !== null) {
         await this.uploadFile()
       }
-      this.updating = false
       */
+      this.resetIssueDuty()
+      this.updating = false
     },
     createInfo () {
       console.log('createInfo')
@@ -459,8 +477,16 @@ export default {
       this.setIssueDuty()
     },
     dueDate: function (date) {
+      console.log('dueDate')
       this.due_date = date.format(this.dateFormat)
       // console.log('期日' + this.due_date)
+      this.setIssueDuty()
+    },
+    memberChanged () {
+      console.log('memberChanged')
+      this.$nextTick(function () {
+        this.setIssueDuty()
+      })
     },
     productChanged () {
       this.$nextTick(function () {
@@ -591,6 +617,7 @@ export default {
         this.issueId = this.issue.issue.id
         this.created_on = this.issue.issue.created_on
         this.due_date = this.issue.issue.due_date ? this.issue.issue.due_date : util.getNowYMD()
+        this.start_date = this.issue.issue.start_date ? this.issue.issue.start_date : util.getNowYMD()
         this.issueSubject = this.issue.issue.subject
         this.customer = customer
         this.setProductOptions()

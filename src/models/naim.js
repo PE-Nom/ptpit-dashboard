@@ -489,7 +489,7 @@ export default {
     try {
       // console.log('updateIssue @ naim : ' + issId)
       // console.log(qstr)
-      await redmine.updateIssue(issId, JSON.stringify(qobj), res => {
+      await redmine.updateIssue(issId, qobj, res => {
         console.log('==== Update Issue @ naim ====')
         console.log(res)
       })
