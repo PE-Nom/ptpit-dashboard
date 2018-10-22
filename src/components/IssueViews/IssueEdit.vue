@@ -465,23 +465,8 @@ export default {
           name: this.issDetailItems[i].name,
           state: 0,
           content: '詳細を記述する欄',
-          attachments: [
-            {
-              filename: '',
-              filesize: '',
-              description: '',
-              content_type: '',
-              content_url: '',
-              id: '',
-              attachment: null
-            }
-          ],
-          conditions: {
-            previousState: '',
-            currentState: '',
-            nextState: ''
-          },
-          currentState: 'none'
+          conditions: this.issDetailItems[i].conditions,
+          currentState: '登録'
         }
         this.itemdata.push(Object.assign({}, itemdata))
       }
