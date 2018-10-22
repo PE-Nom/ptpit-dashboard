@@ -8,7 +8,7 @@
         <b-button v-if="itemdata.state===1"
           class="nc-item-button"
           variant="success"
-          :disabled="disabled"
+          :disabled="!isRejectEnable"
           @click='reject'>
           差戻
         </b-button>
@@ -17,21 +17,21 @@
         <b-button v-if="itemdata.state===0"
           class="nc-item-button"
           variant="success"
-          :disabled="disabled"
+          :disabled="!isEnterEnable"
           @click='enter'>
           確定
         </b-button>
         <b-button v-else-if="itemdata.state===1"
           class="nc-item-button"
           variant="success"
-          :disabled="disabled"
+          :disabled="!isAcceptEnable"
           @click='accept'>
           承認
         </b-button>
         <b-button v-else-if="itemdata.state===2"
           class="nc-item-button"
           variant="success"
-          :disabled="disabled"
+          :disabled="!isCancelEnable"
           @click='cancel'>
           取消
         </b-button>
@@ -39,7 +39,6 @@
       <div class="nc-item-state">
         <b-button
           class="nc-item-button"
-          :disabled="disabled"
           variant='info'>
           {{stateName}}
         </b-button>
@@ -51,7 +50,7 @@
         rows="3"
         id="item-content"
         v-model="itemdata.content"
-        :disabled="disabled"
+        :disabled="!isContentEnable"
         @change="contentChanged"></textarea>
     </div>
     <div class="nc-item-attachments-header">
@@ -63,7 +62,7 @@
           class="nc-item-button attachment"
           id="item-attach"
           variant="success"
-          :disabled="disabled"
+          :disabled="!isAttachmentEnable"
           @click='attach'>
           添付
         </b-button>
@@ -140,7 +139,21 @@ export default {
             default: 0
           }
         }
-      ]
+      ],
+      conditions: {
+        currentState: {
+          type: String,
+          default: ''
+        },
+        nextState: {
+          type: String,
+          default: ''
+        }
+      },
+      currentState: {
+        type: String,
+        default: ''
+      }
     },
     disabled: {
       type: Boolean,
@@ -163,6 +176,24 @@ export default {
       } else if (this.itemdata.state === 2) {
         return '完了'
       }
+    },
+    isEnterEnable () {
+      return (this.itemdata.currentState === this.itemdata.conditions.currentState)
+    },
+    isRejectEnable () {
+      return (this.itemdata.currentState === this.itemdata.conditions.currentState)
+    },
+    isAcceptEnable () {
+      return (this.itemdata.currentState === this.itemdata.conditions.currentState)
+    },
+    isCancelEnable () {
+      return (this.itemdata.currentState === this.itemdata.conditions.nextState)
+    },
+    isContentEnable () {
+      return (this.itemdata.currentState === this.itemdata.conditions.currentState && this.itemdata.state === 0)
+    },
+    isAttachmentEnable () {
+      return (this.itemdata.currentState === this.itemdata.conditions.currentState && this.itemdata.state === 0)
     }
   },
   methods: {

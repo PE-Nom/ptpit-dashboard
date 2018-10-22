@@ -227,42 +227,14 @@ export default {
       this.setData()
     }
   },
-  computed: {
-    stateNonconformity () {
-      return (this.issDetail && this.issDetail.status.name === this.issStatus[0].name)
-    },
-    stateCorrect () {
-      return (this.issDetail && this.issDetail.status.name === this.issStatus[0].name)
-    },
-    stateCause () {
-      return (this.issDetail && this.issDetail.status.name === this.issStatus[1].name)
-    },
-    stateCounterMeasure () {
-      return (this.issDetail && this.issDetail.status.name === this.issStatus[2].name)
-    },
-    stateResult () {
-      return (this.issDetail && this.issDetail.status.name === this.issStatus[3].name)
-    },
-    stateRollOut () {
-      return (this.issDetail && (this.issDetail.status.name === this.issStatus[4].name || this.issDetail.status.name === this.issStatus[4].name))
-    }
-  },
   data () {
-    let issStatus = [
-      '登録',
-      '原因分析',
-      '是正処置',
-      '効果確認',
-      '水平展開',
-      '完了'
-    ]
     let issDetailItems = [
-      {name: '不適合内容', statusName: '不適合内容ステータス', conditions: {accept: '登録', cancel: '原因分析'}},
-      {name: '修正処置', statusName: '修正処置ステータス', conditions: {accept: '登録', cancel: '原因分析'}},
-      {name: '不適合原因', statusName: '不適合原因ステータス', conditions: {accept: '原因分析', cancel: '是正処置'}},
-      {name: '是正処置', statusName: '是正処置ステータス', conditions: {accept: '是正処置', cancel: '効果確認'}},
-      {name: '効果確認', statusName: '効果確認ステータス', conditions: {accept: '効果確認', cancel: '水平展開'}},
-      {name: '水平展開', statusName: '水平展開ステータス', conditions: {accept: '水平展開', cancel: '完了'}}
+      {name: '不適合内容', statusName: '不適合内容ステータス', conditions: {currentState: '登録', nextState: '原因分析'}},
+      {name: '修正処置', statusName: '修正処置ステータス', conditions: {currentState: '登録', nextState: '原因分析'}},
+      {name: '不適合原因', statusName: '不適合原因ステータス', conditions: {currentState: '原因分析', nextState: '是正処置'}},
+      {name: '是正処置', statusName: '是正処置ステータス', conditions: {currentState: '是正処置', nextState: '効果確認'}},
+      {name: '効果確認', statusName: '効果確認ステータス', conditions: {currentState: '効果確認', nextState: '水平展開'}},
+      {name: '水平展開', statusName: '水平展開ステータス', conditions: {currentState: '水平展開', nextState: '完了'}}
     ]
     let issDetailInfoStatusValue = {
       '入力待ち': 0,
@@ -270,7 +242,7 @@ export default {
       '完了': 2
     }
     return {
-      issStatus: issStatus,
+      issStatus: '',
       issueDuty: false,
       issueId: '',
       issueSubject: '',
@@ -291,20 +263,12 @@ export default {
       console.log(idx)
       return idx
     },
-    // ステータスを進める
-    forwardState (idx) {
-
-    },
-    // ステータスを戻す
-    backwardState (idx) {
-
-    },
     // 確定
     enter (itemdata) {
       console.log('IssuEdit.enter')
       console.log(itemdata)
-      // 入力待ち -> 承認待ち に遷移させる
       let idx = this.findItemIndex(itemdata)
+      // 入力待ち -> 承認待ち に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['承認待ち']
       this.setIssueDuty()
     },
@@ -312,8 +276,8 @@ export default {
     reject (itemdata) {
       console.log('IssuEdit.reject')
       console.log(itemdata)
-      // 承認待ち -> 入力待ち に遷移させる
       let idx = this.findItemIndex(itemdata)
+      // 承認待ち -> 入力待ち に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
       this.setIssueDuty()
     },
@@ -321,30 +285,36 @@ export default {
     accept (itemdata) {
       console.log('IssuEdit.accept')
       console.log(itemdata)
-      // 承認待ち -> 完了 に遷移させる
       let idx = this.findItemIndex(itemdata)
+      // 承認待ち -> 完了 に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['完了']
       // ステータスを進める
-      this.forwardState(idx)
+      this.issStatus = this.issDetailItems[idx].conditions.nextState
+      this.itemdata.forEach(item => {
+        item.currentState = this.issStatus
+      })
       this.setIssueDuty()
     },
     // 取り消し
     cancel (itemdata) {
       console.log('IssuEdit.cancel')
       console.log(itemdata)
-      // 完了 -> 入力待ち に遷移させる
       let idx = this.findItemIndex(itemdata)
+      // 完了 -> 入力待ち に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
       // ステータスを戻す
-      this.backwardState(idx)
+      this.issStatus = this.issDetailItems[idx].conditions.currentState
+      this.itemdata.forEach(item => {
+        item.currentState = this.issStatus
+      })
       this.setIssueDuty()
     },
     // 記述内容の編集
     contentChanged (itemdata) {
       console.log('IssuEdit.contentChanged')
       console.log(itemdata)
-      // 編集内容を反映
       let idx = this.findItemIndex(itemdata)
+      // 編集内容を反映
       this.itemdata[idx].content = itemdata.content
       this.setIssueDuty()
     },
@@ -410,6 +380,7 @@ export default {
     setIssDetail () {
       console.log('setIssDetail')
       console.log(this.issDetail)
+      this.issStatus = this.issDetail.status.name
       if (this.issDetail) {
         // 添付ファイルリスト
         let issueAttachments = []
@@ -428,22 +399,18 @@ export default {
         this.itemdata = []
         this.issDetailItems.forEach(item => {
           let customFieldForName = util.getCustomFieldByName(this.issDetail.custom_fields, item.name)
-          let state = 0
           let customFieldForStatus = util.getCustomFieldByName(this.issDetail.custom_fields, item.statusName)
-          if (item.statusName !== '修正処置ステータス') {
-            state = this.issDetailInfoStatusValue[customFieldForStatus.value]
-          } else {
-            state = customFieldForStatus.value
-          }
           // 添付ファイルを検索し、ファイル名に項目名を含む添付ファイルを抽出する。
           let itemAttachments = issueAttachments.filter(attachment => {
             return attachment.filename.indexOf(item.name) !== -1
           })
           let itemdata = {
             name: customFieldForName.name,
-            state: state,
+            state: this.issDetailInfoStatusValue[customFieldForStatus.value],
             content: customFieldForName.value,
-            attachments: itemAttachments
+            attachments: itemAttachments,
+            conditions: item.conditions,
+            currentState: this.issStatus
           }
           console.log(itemdata)
           this.itemdata.push(itemdata)
@@ -490,7 +457,13 @@ export default {
               content_url: '',
               id: ''
             }
-          ]
+          ],
+          conditions: {
+            previousState: '',
+            currentState: '',
+            nextState: ''
+          },
+          currentState: 'none'
         }
         this.itemdata.push(Object.assign({}, itemdata))
       }

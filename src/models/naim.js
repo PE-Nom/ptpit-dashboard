@@ -213,6 +213,12 @@ export default {
   getIssueStatuses: function () {
     return util.convertOptionObjs(this.issueStatuses, 'name')
   },
+  getIssueStatusIdByName (name) {
+    let issueStatus = this.issueStatuses.filter(status => {
+      return status.name === name
+    })
+    return issueStatus[0].id
+  },
 
   // ------------------
   // Issue Priority
