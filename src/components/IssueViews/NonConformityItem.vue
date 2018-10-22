@@ -92,12 +92,20 @@
         </div>
       </div>
     </div>
+    <AttachmentDialog v-if="showAttachmentDialog" @cancelClose="cancelClose" @attachClose="attachClose">
+      <h3 slot="header">添付</h3>
+    </AttachmentDialog>
+
   </div>
 </template>
 
 <script>
+import AttachmentDialog from './AttachmentDialog.vue'
 export default {
   name: 'NonConformityItem',
+  components: {
+    AttachmentDialog
+  },
   props: {
     itemdata: {
       name: {
@@ -164,7 +172,8 @@ export default {
   data () {
     let attachmentsInfoColumns = ['id', 'filename', 'description']
     return {
-      attachmentsInfoColumns: attachmentsInfoColumns
+      attachmentsInfoColumns: attachmentsInfoColumns,
+      showAttachmentDialog: false
     }
   },
   computed: {
@@ -219,7 +228,18 @@ export default {
     },
     attach () {
       console.log('NonConformitytem.attach')
-      this.$emit('attach', this.itemdata)
+      this.showAttachmentDialog = true
+    },
+    cancelClose () {
+      console.log('NonConformitytem.cancelClose')
+      this.showAttachmentDialog = false
+    },
+    attachClose (attachment) {
+      console.log('NonConformitytem.attachClose')
+      this.showAttachmentDialog = false
+      attachment.name = this.itemdata.name
+      console.log(attachment)
+      this.$emit('attach', attachment)
     }
   },
   created () {

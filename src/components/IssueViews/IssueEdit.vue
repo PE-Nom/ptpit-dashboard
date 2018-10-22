@@ -252,7 +252,8 @@ export default {
       issDetailItems: issDetailItems,
       issDetailInfoStatusValue: issDetailInfoStatusValue,
       issDetail: null,
-      itemdata: []
+      itemdata: [],
+      attachmentFiles: []
     }
   },
   methods: {
@@ -319,9 +320,21 @@ export default {
       this.setIssueDuty()
     },
     // 添付ファイル追加
-    attach (itemdata) {
-      console.log('IssuEdit.enter')
-      console.log(itemdata)
+    attach (attachment) {
+      console.log('IssuEdit.attach')
+      console.log(attachment)
+      let idx = this.findItemIndex(attachment)
+      let item = {
+        filename: attachment.file.name,
+        filesize: parseInt(attachment.file.size / 1000) + 'kbyte',
+        description: attachment.description,
+        content_type: attachment.file.type,
+        content_url: '',
+        id: '***',
+        attachment: attachment
+      }
+      this.attachmentFiles.push(item)
+      this.itemdata[idx].attachments.push(item)
       this.setIssueDuty()
     },
     createInfo () {
@@ -397,6 +410,7 @@ export default {
         })
         // Detail オブジェクトの生成
         this.itemdata = []
+        this.attachmentFiles = []
         this.issDetailItems.forEach(item => {
           let customFieldForName = util.getCustomFieldByName(this.issDetail.custom_fields, item.name)
           let customFieldForStatus = util.getCustomFieldByName(this.issDetail.custom_fields, item.statusName)
