@@ -223,7 +223,7 @@
 <script>
 import naim from '../../models/naim.js'
 import util from '../../models/util.js'
-// import fileUploader from '../../models/fileUploader.js'
+import fileUploader from '../../models/fileUploader.js'
 import Indicator from '../Indicator.vue'
 import DateSelector from '../DateSelector.vue'
 import NonConformity from './NonConformity'
@@ -383,29 +383,38 @@ export default {
     },
     // ------------------
     // DataBase 更新
-    /*
     async uploadFile () {
-      if (this.file) {
+      for (let attachment of this.attachmentFiles) {
         try {
-          let res = await naim.uploadFile(this.file, this.mediaData, this.imageDescription)
+          console.log('IssueEdit.uploadFile')
+          console.log(attachment)
+          let res = await naim.uploadFile(
+            attachment.attachment.file,
+            attachment.attachment.mediaData,
+            attachment.attachment.description)
           if (res) {
-            this.token = res.data.upload.token
+            let token = res.data.upload.token
             let attachId = res.data.upload.id
+            let filename = attachment.attachment.name + '_' + attachment.attachment.file.name
             console.log('uploaded file')
-            console.log('token : ' + this.token)
+            console.log('token : ' + token)
             console.log('id : ' + attachId)
+            console.log('name : ' + filename)
             let qobj = {
               'issue': {
                 'uploads': [{
-                  'token': this.token,
-                  'filename': this.file.name,
-                  'description': this.imageDescription,
-                  'content_type': this.file.type
+                  'token': token,
+                  'filename': filename,
+                  'description': attachment.attachment.description,
+                  'content_type': attachment.attachment.file.type
                 }]
               }
             }
-            await naim.updateIssue(editstate.currentIssueId, qobj)
-            await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.file, this.mediaData)
+            await naim.updateIssue(this.issueId, qobj)
+            await fileUploader.uploadFile(
+              this.issueId,
+              attachId + '_' + attachment.attachment.name,
+              attachment.attachment.file)
           }
         } catch (err) {
           console.log('error has occured @ attachingFile')
@@ -413,7 +422,6 @@ export default {
         }
       }
     },
-    */
     createQueryString: function () {
       let qobj = {
         issue: {
@@ -458,18 +466,25 @@ export default {
       this.updating = true
       let qobj = this.createQueryString()
       await naim.updateIssue(this.issueId, qobj)
-      await naim.retrieveIssues()
-      console.log(qobj)
-      /*
-      if (this.mediaData !== null) {
-        await this.uploadFile()
-      }
-      */
+      await naim.retrieveIssues(naim.getTrackerIdByName('不適合'))
+      await this.uploadFile()
       this.resetIssueDuty()
       this.updating = false
+      this.$emit('reloadRequest')
     },
-    createInfo () {
+    async createInfo () {
       console.log('createInfo')
+      this.creating = true
+      let qobj = this.createQueryString()
+      let ret = await naim.createIssue(qobj)
+      this.issueId = ret.data.issue.id
+      // 登録時、ステータスは必ず初期値となるので、最新値に変更するため登録後、更新をかける
+      await naim.updateIssue(this.issueId, qobj)
+      await naim.retrieveIssues(naim.getTrackerIdByName('不適合'))
+      await this.uploadFile()
+      this.resetIssueDuty()
+      this.creating = false
+      this.$emit('reloadRequest')
     },
     // ------------------
     issueSubjectChanged () {
@@ -557,7 +572,6 @@ export default {
     setIssDetail () {
       console.log('setIssDetail')
       console.log(this.issDetail)
-      this.issStatus = this.issDetail.status.name
       if (this.issDetail) {
         // 添付ファイルリスト
         let issueAttachments = []
@@ -607,11 +621,13 @@ export default {
           // console.log(prj)
           customer = util.getProjectCustomFieldValue(prj, '顧客情報')
           this.issDetail = await naim.getIssueDetail(this.issue.issue.id)
+          this.issStatus = this.issDetail.status.name
           this.setIssDetail()
           console.log(this.issDetail)
         } else {
           customer = '未定'
           this.issDetail = null
+          this.issStatus = '登録'
           this.initializeProps()
         }
         this.issueId = this.issue.issue.id
@@ -632,6 +648,7 @@ export default {
           name: this.issDetailItems[i].name,
           state: 0,
           content: '詳細を記述する欄',
+          attachments: [],
           conditions: this.issDetailItems[i].conditions,
           currentState: '登録'
         }

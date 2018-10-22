@@ -28,8 +28,8 @@ export default {
       this.issue = Object.assign({}, issue)
     },
     reload () {
-      console.log('IssueEdit.reload')
-      this.reloadCount++
+      console.log('IssuesView.reload')
+      this.reloadcount++
     }
   }
 }

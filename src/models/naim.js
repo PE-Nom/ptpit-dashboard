@@ -474,9 +474,9 @@ export default {
     return this.issueDetail
   },
 
-  createIssue: async function (qobj) {
+  async createIssue (qobj) {
     try {
-      let ret = await redmine.createIssue(JSON.stringify(qobj), res => {
+      let ret = await redmine.createIssue(qobj, res => {
         console.log('==== Create Issue @ naim ====')
         console.log(res)
       })
@@ -503,7 +503,7 @@ export default {
     this.issues = []
   },
 
-  uploadFile: async function (file, mediaData, imageDescription) {
+  async uploadFile (file, mediaData, imageDescription) {
     console.log('uploadFile @ naim')
     let ret = null
     try {
