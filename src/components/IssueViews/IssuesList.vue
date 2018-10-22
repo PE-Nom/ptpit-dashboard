@@ -192,7 +192,7 @@ export default {
     },
     async refreshList () {
       console.log('refreshList')
-      await naim.retrieveIssues(naim.getTrackerId('不適合'))
+      await naim.retrieveIssues(naim.getTrackerIdByName('不適合'))
       this.issues = naim.getIssues()
       this.filterByProduct()
     },

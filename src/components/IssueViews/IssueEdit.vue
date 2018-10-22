@@ -47,6 +47,30 @@
             class="grid-item item-form issue-customer-form"
             v-model="customer"
             disabled>
+          <!-- 起票日 -->
+          <label for="inputCreateDate" class="grid-item item-label issue-createddate-label">起票日</label>
+          <input type="text"
+            class="grid-item item-form issue-createddate-form"
+            v-model="created_on"
+            disabled>
+          <!-- 処置期限 -->
+          <label for="inputDueDate" class="grid-item item-label issue-duedate-label">期日</label>
+          <date-selector
+            class="grid-item issue-duedate-form"
+            :format="dateFormat"
+            :start="minDate"
+            :end="maxDate"
+            v-bind:default="due_date"
+            @date-change="dueDate">
+          </date-selector>
+          <!-- 処置責任者 -->
+          <label for="inputAssigned" class="grid-item item-label issue-assigned-label">処置責任者</label>
+          <b-form-select
+            class="grid-item item-form issue-assigned-form"
+            v-model="assigned"
+            :disabled="this.product===-1"
+            :options="membershipOptions">
+          </b-form-select>
         </div>
       </div>
       <div class ="detail-field">
@@ -191,12 +215,16 @@
         </div>
       </div>
     </div>
+    <Indicator v-if="updating || creating" message="更新中です。少々お待ちください" color="#FFFFFF"></Indicator>
   </div>
 </template>
 
 <script>
 import naim from '../../models/naim.js'
 import util from '../../models/util.js'
+// import fileUploader from '../../models/fileUploader.js'
+import Indicator from '../Indicator.vue'
+import DateSelector from '../DateSelector.vue'
 import NonConformity from './NonConformity'
 import Correct from './Correct.vue'
 import Cause from './Cause.vue'
@@ -207,12 +235,14 @@ import RollOut from './RollOut.vue'
 export default {
   name: 'IssueEdit',
   components: {
-    NonConformity: NonConformity,
-    Correct: Correct,
-    Cause: Cause,
-    CounterMeasure: CounterMeasure,
-    Result: Result,
-    RollOut: RollOut
+    NonConformity,
+    Correct,
+    Cause,
+    CounterMeasure,
+    Result,
+    RollOut,
+    Indicator,
+    DateSelector
   },
   props: {
     issue: {
@@ -242,12 +272,22 @@ export default {
       '完了': 2
     }
     return {
+      dateFormat: 'YYYY-MM-DD',
+      currentDate: '2018-07-25',
+      minDate: '2018-01-01',
+      maxDate: '2030-12-31',
+      due_date: '2018-08-11',
+      created_on: '',
+      assigned: '',
+      updating: false,
+      creating: false,
       issStatus: '',
       issueDuty: false,
       issueId: '',
       issueSubject: '',
       product: '',
       productOptions: [{value: '', text: ''}],
+      membershipOptions: [{value: '', text: ''}],
       customer: '',
       issDetailItems: issDetailItems,
       issDetailInfoStatusValue: issDetailInfoStatusValue,
@@ -337,15 +377,90 @@ export default {
       this.itemdata[idx].attachments.push(item)
       this.setIssueDuty()
     },
+    // ------------------
+    // DataBase 更新
+    /*
+    async uploadFile () {
+      if (this.file) {
+        try {
+          let res = await naim.uploadFile(this.file, this.mediaData, this.imageDescription)
+          if (res) {
+            this.token = res.data.upload.token
+            let attachId = res.data.upload.id
+            console.log('uploaded file')
+            console.log('token : ' + this.token)
+            console.log('id : ' + attachId)
+            let qobj = {
+              'issue': {
+                'uploads': [{
+                  'token': this.token,
+                  'filename': this.file.name,
+                  'description': this.imageDescription,
+                  'content_type': this.file.type
+                }]
+              }
+            }
+            await naim.updateIssue(editstate.currentIssueId, qobj)
+            await fileUploader.uploadFile(editstate.currentIssueId, attachId, this.file, this.mediaData)
+          }
+        } catch (err) {
+          console.log('error has occured @ attachingFile')
+          console.log(err)
+        }
+      }
+    },
+    createQueryString: function () {
+      let qobj = {
+        'issue': {
+          'subject': this.issueSubject, // subject
+          'priority_id': naim.getIssuePriorityByName('通常'), // priority Object
+          'status_id': naim.getIssueStatusIdByName(this.issStatus), // status Object
+          // ----------------------
+          'tracker_id': naim.getTrackerIdByName('不適合'), // tracker Object
+          'project_id': this.product, // project Object
+          'description': '', // description
+          // ----------------------
+          'start_date': '', // start_date
+          'due_date': '', // due_date
+          'done_ratio': '', // done_ratio
+          // ----------------------
+          'assigned_to_id': this.assigned, // assigned_to Object
+          // ----------------------
+          // activity
+          // workingTime
+          // comment
+          // 'notes': this.notation, // notation
+          'custom_fields': [{ id: naim.findCustomFieldId('巡視場所'), 'value': this.site }]
+        }
+      }
+      return qobj
+    },
+    */
+    updateInfo () {
+      console.log('updateInfo')
+      /*
+      this.updating = true
+      let qobj = this.createQueryString()
+      await naim.updateIssue(this.issId, qobj)
+      await naim.retrieveIssues()
+      console.log(qobj)
+      if (this.mediaData !== null) {
+        await this.uploadFile()
+      }
+      this.updating = false
+      */
+    },
     createInfo () {
       console.log('createInfo')
     },
-    updateInfo () {
-      console.log('updateInfo')
-    },
+    // ------------------
     issueSubjectChanged () {
       console.log('issueSubjectChanged')
       this.setIssueDuty()
+    },
+    dueDate: function (date) {
+      this.due_date = date.format(this.dateFormat)
+      // console.log('期日' + this.due_date)
     },
     productChanged () {
       this.$nextTick(function () {
@@ -362,6 +477,7 @@ export default {
         } else {
           this.customer = '未定'
         }
+        this.setMembershipOptions()
         this.setIssueDuty()
       })
     },
@@ -388,6 +504,28 @@ export default {
         this.product = this.issue.issue.project.id
       } else {
         this.product = this.productOptions[0].value
+      }
+      this.setMembershipOptions()
+    },
+    setMembershipOptions () {
+      console.log('setMembershipOptions')
+      this.membershipOptions = []
+      this.membershipOptions.push({value: -1, text: '-'})
+      if (this.product !== -1) {
+        let membership = naim.getProjectMemberships(this.product)
+        console.log(membership)
+        for (let member of membership) {
+          let option = {
+            value: member.user.id,
+            text: member.user.name
+          }
+          this.membershipOptions.push(option)
+        }
+      }
+      if (this.issue.issue.assigned_to) {
+        this.assigned = this.issue.issue.assigned_to.id
+      } else {
+        this.assigned = this.membershipOptions[0].value
       }
     },
     setIssDetail () {
@@ -451,6 +589,8 @@ export default {
           this.initializeProps()
         }
         this.issueId = this.issue.issue.id
+        this.created_on = this.issue.issue.created_on
+        this.due_date = this.issue.issue.due_date ? this.issue.issue.due_date : util.getNowYMD()
         this.issueSubject = this.issue.issue.subject
         this.customer = customer
         this.setProductOptions()
@@ -524,13 +664,16 @@ export default {
   width: 30vw;
   margin-right: auto;
   margin-left: 10px;
-  grid-template-rows: 50px 50px 50px 50px;
+  grid-template-rows: 50px 50px 50px 50px 50px 50px 50px;
   grid-template-columns: 10vw 20vw;
   grid-template-areas:
     "item-id-label item-id-content"
     "item-name-label item-name-content"
     "item-subject-label item-subject-content"
-    "item-customer-label item-customer-content";
+    "item-customer-label item-customer-content"
+    "item-createddate-label item-createddate-content"
+    "item-duedate-label item-duedate-content"
+    "item-assigned-label item-assigned-content";
 }
 .grid-item {
   height: 80%;
@@ -566,6 +709,24 @@ export default {
 }
 .issue-customer-form {
   grid-area: item-customer-content;
+}
+.issue-createddate-label {
+  grid-area: item-createddate-label;
+}
+.issue-createddate-form {
+  grid-area: item-createddate-content;
+}
+.issue-duedate-label {
+  grid-area: item-duedate-label;
+}
+.issue-duedate-form {
+  grid-area: item-duedate-content;
+}
+.issue-assigned-label {
+  grid-area: item-assigned-label;
+}
+.issue-assigned-form {
+  grid-area: item-assigned-content;
 }
 /*
  * 個別の入力事項

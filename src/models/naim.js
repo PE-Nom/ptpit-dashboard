@@ -40,7 +40,7 @@ export default {
       //
       await this.retrieveProjects()
       await this.retrieveMembershipOfProjects()
-      await this.retrieveIssues(this.getTrackerId('不適合'))
+      await this.retrieveIssues(this.getTrackerIdByName('不適合'))
       //
       await this.retrieveTimeEntryActivities()
       await this.retrieveDocumentCategories()
@@ -105,7 +105,7 @@ export default {
   getTrackers () {
     return util.convertOptionObjs(this.trackers, 'name')
   },
-  getTrackerId (name) {
+  getTrackerIdByName (name) {
     let id = null
     this.trackers.forEach(tracker => {
       if (tracker.name === name) {
@@ -237,6 +237,12 @@ export default {
   },
   getIssuePriorities: function () {
     return util.convertOptionObjs(this.issuePriorities, 'name')
+  },
+  getIssuePriorityByName (name) {
+    let issuePriority = this.issuePriorities.filter(priority => {
+      return priority.name === name
+    })
+    return issuePriority[0].id
   },
 
   // ------------------

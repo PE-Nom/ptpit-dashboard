@@ -153,7 +153,7 @@ export default {
             identifier: this.product.identifier,
             description: this.product.description,
             is_public: false,
-            tracker_ids: [naim.getTrackerId('不適合')],
+            tracker_ids: [naim.getTrackerIdByName('不適合')],
             parent_id: parent.id,
             issue_custom_field_ids: [
               naim.getCustomFieldId('不適合内容'),
