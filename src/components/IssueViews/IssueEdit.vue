@@ -77,7 +77,27 @@
       <div class ="detail-field">
         <div class="details">
           <div class="status-display-field">
-            登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了
+            <div v-if="issStatus==='登録'">
+              <span style="color:red">登録</span><span style="color:gray"> => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了</span>
+            </div>
+            <div v-else-if="issStatus==='原因分析'">
+              <span style="color:blue">登録 =></span><span style="color:red"> 原因分析</span><span style="color:gray"> => 是正処置 => 効果確認 => 水平展開 => 完了</span>
+            </div>
+            <div v-else-if="issStatus==='是正処置'">
+              <span style="color:blue">登録 => 原因分析 =></span><span style="color:red"> 是正処置</span><span style="color:gray"> => 効果確認 => 水平展開 => 完了</span>
+            </div>
+            <div v-else-if="issStatus==='効果確認'">
+              <span style="color:blue">登録 => 原因分析 => 是正処置 =></span><span style="color:red"> 効果確認</span><span style="color:gray"> => 水平展開 => 完了</span>
+            </div>
+            <div v-else-if="issStatus==='水平展開'">
+              <span style="color:blue">登録 => 原因分析 => 是正処置 => 効果確認</span><span style="color:red"> => 水平展開</span><span style="color:gray"> => 完了</span>
+            </div>
+            <div v-else-if="issStatus==='完了'">
+              <span style="color:green">登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了</span>
+            </div>
+            <div v-else>
+              登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了
+            </div>
           </div>
           <div class="content-field">
             <!-- 不適合内容 -->
@@ -259,6 +279,14 @@ export default {
     }
   },
   data () {
+    let statusStrings = [
+      '登録',
+      '原因分析',
+      '是正処置',
+      '効果確認',
+      '水平展開',
+      '完了'
+    ]
     let issDetailItems = [
       {name: '不適合内容', statusName: '不適合内容ステータス', conditions: {currentState: '登録', nextState: '原因分析'}},
       {name: '修正処置', statusName: '修正処置ステータス', conditions: {currentState: '登録', nextState: '原因分析'}},
@@ -297,7 +325,8 @@ export default {
       issDetailInfoStatusName: issDetailInfoStatusName,
       issDetail: null,
       itemdata: [],
-      attachmentFiles: []
+      attachmentFiles: [],
+      statusStrings: statusStrings
     }
   },
   methods: {
