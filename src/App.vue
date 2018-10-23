@@ -21,7 +21,7 @@
           <i class="fa fa-fw fa-comment-o"></i>
           <span>ユーザー管理</span>
         </a>
-        <a @click='menuselected("default")'>
+        <a @click='menuselected("statistics")'>
           <i class="fa fa-fw fa-bar-chart-o"></i>
           <span>統計分析</span>
         </a>

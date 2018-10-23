@@ -12,8 +12,8 @@ import ProductEdit from './ProductEdit.vue'
 export default {
   name: 'products',
   components: {
-    ProductsList: ProductsList,
-    ProductEdit: ProductEdit
+    ProductsList,
+    ProductEdit
   },
   data () {
     return {

@@ -12,8 +12,8 @@ import IssueEdit from './IssueEdit.vue'
 export default {
   name: 'issues',
   components: {
-    IssuesList: IssuesList,
-    IssueEdit: IssueEdit
+    IssuesList,
+    IssueEdit
   },
   data () {
     return {
