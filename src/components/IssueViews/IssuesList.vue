@@ -5,16 +5,17 @@
     </div>
     <div class="header-field">
       <div class="table-row header">
-        <div class="productfilter">
-          <b-form-select class="product-filter-form"
-            v-model="product"
-            :options="productOptions"
-            @change="filterByProduct">
-          </b-form-select>
-        </div>
         <div class="operation">
+          <div class="productfilter">
+            <b-form-select
+              class="flex-inner-item"
+              v-model="product"
+              :options="productOptions"
+              @change="filterByProduct">
+            </b-form-select>
+          </div>
           <div class="filter" >
-            <input name="query" class="flex-inner-item" v-model="searchQuery" placeholder="フィルタ文字列">
+            <b-form-input name="query" class="flex-inner-item" v-model="searchQuery" placeholder="フィルタ文字列"></b-form-input>
           </div>
           <div class="new-issue">
             <img :src="icon_new_issue" class="flex-inner-item" width='30px' height='30px' @click="createIssue"/>
@@ -36,7 +37,7 @@
 
     <div class="data-field">
       <div v-for="(entry,idx) in issueslist" v-bind:key=idx @click="editIssue(entry)">
-        <div class="table-row data">
+        <div class="table-row data" v-bind:style="[selectedId===entry.id ? styleForSelectedRow : styleForNonSelectedRow]">
           <div class="wrapper attributes data">
             <div v-for="(val, idx) in columns" v-bind:key=idx :class="[val]">
               <span>
@@ -84,7 +85,12 @@ export default {
     columns.forEach(function (key) {
       sortOrders[key] = 1
     })
-
+    let styleForSelectedRow = {
+      'background-color': '#C0C0C0'
+    }
+    let styleForNonSelectedRow = {
+      'background-color': '#FFFFFF'
+    }
     return {
       icon_new_issue: iconNew,
       icon_refresh_list: iconRefresh,
@@ -96,7 +102,10 @@ export default {
       sortOrders: sortOrders,
       message: '不適合管理　不適合一覧',
       product: '',
-      productOptions: [{value: '', text: ''}]
+      productOptions: [{value: '', text: ''}],
+      selectedId: -1,
+      styleForSelectedRow: styleForSelectedRow,
+      styleForNonSelectedRow: styleForNonSelectedRow
     }
   },
   computed: {
@@ -171,6 +180,7 @@ export default {
     },
     editIssue (entry) {
       console.log('editIssue')
+      this.selectedId = entry.id
       let issue = {
         issue: entry.issue,
         currentProduct: this.product
@@ -179,6 +189,7 @@ export default {
     },
     createIssue () {
       console.log('createIssue')
+      this.selectedId = -1
       let issue = {
         issue: {
           id: -1,
@@ -231,7 +242,7 @@ export default {
   .issues-list{
     padding-left: 6px;
     padding-right: 6px;
-    height: 400px;
+    height: 300px;
     box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
   }
   /* path indicator */
@@ -241,7 +252,7 @@ export default {
   }
   /* list header */
   .header-field {
-    height: 150px;
+    height: 80px;
   }
   .table-row {
     border-bottom: 1px solid #e0e0e0;
@@ -254,19 +265,8 @@ export default {
     padding-right: 6px;
     background-color: rgb(229, 255, 219);
   }
-  .productfilter {
-    height: 30%;
-    padding-top: 6px;
-    padding-left: 6px;
-    display: -webkit-flex;
-    display: flex;
-  }
-  .product-filter-form {
-    width: 20vw;
-    float: left;
-  }
   .operation {
-    height: 35%;
+    height: 50%;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: row;
@@ -274,10 +274,17 @@ export default {
     -webkit-flex-wrap: nowrap;
     flex-wrap: nowrap;
   }
+  .productfilter {
+    padding-top: 6px;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-grow: 1;
+  }
   .filter {
     padding-top: 6px;
-    padding-left: 6px;
-    flex-grow: 2;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-grow: 1;
   }
   .new-issue {
     padding-top: 6px;
@@ -309,7 +316,7 @@ export default {
     -webkit-flex-grow: 0;
   }
   .wrapper.attributes.header {
-    height: 35%;
+    height: 50%;
     margin-left: 0px;
     margin-right: 0px;
     padding-top: 1.5vh;
@@ -317,11 +324,11 @@ export default {
   }
   /* list data */
   .data-field {
-    height: 200px;
+    height: 150px;
     overflow-y: auto;
   }
   .table-row.data {
-    height: 50px;
+    height: 30px;
     width: 100%;
     padding-left: 6px;
     padding-right: 6px;

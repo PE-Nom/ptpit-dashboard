@@ -29,7 +29,7 @@
 
     <div class="data-field">
       <div v-for="(entry,idx) in productslist" v-bind:key=idx @click="editProduct(entry)">
-        <div class="table-row data">
+        <div class="table-row data" v-bind:style="[selectedId===entry.product.id ? styleForSelectedRow : styleForNonSelectedRow]">
           <div class="wrapper attributes data">
             <div v-for="(val, idx) in columns" v-bind:key=idx :class="[val]">
               <span>
@@ -68,11 +68,22 @@ export default {
   },
   data () {
     let sortOrders = {}
-    let columns = ['品番', '製品名称', '客先', '登録日時', '説明']
+    let columns = [
+      '品番',
+      '製品名称',
+      '客先',
+      '登録日時',
+      '説明'
+    ]
     columns.forEach(function (key) {
       sortOrders[key] = 1
     })
-
+    let styleForSelectedRow = {
+      'background-color': '#C0C0C0'
+    }
+    let styleForNonSelectedRow = {
+      'background-color': '#FFFFFF'
+    }
     return {
       userName: '',
       icon_new_product: iconNew,
@@ -82,7 +93,10 @@ export default {
       searchQuery: '',
       sortKey: 'キー',
       sortOrders: sortOrders,
-      message: '不適合管理対象　製品情報'
+      message: '不適合管理対象　製品情報',
+      selectedId: -1,
+      styleForSelectedRow: styleForSelectedRow,
+      styleForNonSelectedRow: styleForNonSelectedRow
     }
   },
   computed: {
@@ -142,13 +156,15 @@ export default {
       this.sortKey = key
       this.sortOrders[key] = this.sortOrders[key] * -1
     },
-    editProduct (product) {
+    editProduct (entry) {
       console.log('edit products')
-      console.log(product)
-      this.$emit('editProduct', product.product)
+      console.log(entry)
+      this.selectedId = entry.product.id
+      this.$emit('editProduct', entry.product)
     },
     createProduct () {
       console.log('create products')
+      this.selectedId = -1
       this.$emit('createProduct')
     },
     async refreshList () {
@@ -181,7 +197,7 @@ export default {
   .products-list{
     padding-left: 6px;
     padding-right: 6px;
-    height: 400px;
+    height: 300px;
     box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
     /*
     margin-right: auto;
@@ -212,7 +228,7 @@ export default {
   }
   /* list header */
   .header-field {
-    height: 100px;
+    height: 80px;
     /*
     display: block;
     font-size: 80%;
@@ -270,11 +286,11 @@ export default {
   }
   /* list data */
   .data-field {
-    height: 250px;
+    height: 150px;
     overflow-y: auto;
   }
   .table-row.data {
-    height: 50px;
+    height: 30px;
     width: 100%;
     padding-left: 6px;
     padding-right: 6px;

@@ -53,38 +53,41 @@
         </div>
       </div>
       <div class="userinfo-field">
-        <div class="users">
-          <table class="user-info">
-            <caption class="user-info-caption">関係者リスト</caption>
-            <thead class="user-info-header">
-              <tr class="user-info-tr head">
-                <th class="user-info-th" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
-                  {{val}}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="user-info-data">
-              <tr class="user-info-tr data" v-for="(entry,idx) in userInfo" v-bind:key=idx>
-                <td class="user-info-td" v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
-                  <!-- 管理者 -->
-                  <input type="checkbox"
-                    v-if="val===managerRoleName"
-                    v-model="roleManager"
-                    v-bind:value="entry"
-                    @change="roleManagerChanged(entry)">
-                  <!-- 報告者 -->
-                  <input type="checkbox"
-                    v-else-if="val===reporterRoleName"
-                    v-model="roleReporter"
-                    v-bind:value="entry"
-                    @change="roleReporterChanged(entry)">
-                  <span v-else>
-                    {{entry[val]}}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="users item-form">
+          <div class="header-field">
+            <div class="table-row header">
+              <div class="wrapper attributes header">
+                <div v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
+                  {{ val }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="data-field">
+            <div v-for="(entry,idx) in userInfo" v-bind:key=idx>
+              <div class="table-row data">
+                <div class="wrapper attributes data">
+                  <div v-for="(val, idx) in userInfoColumns" v-bind:key=idx :class="[val]">
+                    <!-- 管理者 -->
+                    <input type="checkbox"
+                      v-if="val===managerRoleName"
+                      v-model="roleManager"
+                      v-bind:value="entry"
+                      @change="roleManagerChanged(entry)">
+                    <!-- 報告者 -->
+                    <input type="checkbox"
+                      v-else-if="val===reporterRoleName"
+                      v-model="roleReporter"
+                      v-bind:value="entry"
+                      @change="roleReporterChanged(entry)">
+                    <span v-else>
+                      {{entry[val]}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -525,7 +528,7 @@ export default {
   margin-top: 6px;
   padding-left: 6px;
   padding-right: 6px;
-  height: 440px;
+  height: 570px;
   box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
   /*
   margin-right: auto;
@@ -546,8 +549,8 @@ export default {
 .edit-field {
   padding-top: 6px;
   display: grid;
-  grid-template-rows: 350px;
-  grid-template-columns: 50vw 50vw
+  grid-template-rows: 470px;
+  grid-template-columns: 35vw 35vw
 }
 .item-field {
   padding-top: 6px;
@@ -612,26 +615,52 @@ export default {
   margin-left: 50px;
   margin-right: auto;
 }
-.user-info-caption {
-  padding-top: 0px;
-  padding-bottom: 6px;
+/* user list header */
+.table-row {
+  border-bottom: 1px solid #e0e0e0;
+  border-collapse: collapse;
+}
+.table-row.header {
+  height: 100%;
+  width: 100%;
+  padding-left: 6px;
+  padding-right: 6px;
+  color:rgb(255, 255, 255);
+  background-color: rgb(1, 107, 24);
+}
+.wrapper {
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: row;
+  -webkit-flex-direction: row;
+}
+.attributes {
+  flex-grow: 0;
+  -webkit-flex-grow: 0;
+}
+.wrapper.attributes.header {
+  height: 35%;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-top: 1.5vh;
+  font-weight: bold;
+}
+/* user list data */
+.data-field {
+  height: 440px;
+  overflow-y: auto;
+}
+.table-row.data {
   height: 30px;
-  caption-side: top;
+  width: 100%;
+  padding-left: 6px;
+  padding-right: 6px;
 }
-thead, tbody {
-    display: block;
-}
-tbody {
-    overflow-y: scroll;
-    height: 280px;
-}
-.user-info-th {
-  height: 40px;
-  border: 1px solid #666
-}
-.user-info-td {
-  height: 30px;
-  border: 1px solid #666
+.wrapper.attributes.data {
+  height: 100%;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-top: 6px;
 }
 .名前 {
   width: 300px;

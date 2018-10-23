@@ -288,6 +288,12 @@ export default {
 .nc-item-content {
   grid-area: content;
 }
+.control-label {
+  vertical-align: middle;
+  height: 0.5em;
+  margin-top: auto;
+  margin-bottom: auto;
+}
 .nc-item-operation-reject {
   grid-area: reject;
 }
