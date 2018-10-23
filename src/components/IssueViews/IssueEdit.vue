@@ -93,7 +93,7 @@
               <span style="color:blue">登録 => 原因分析 => 是正処置 => 効果確認</span><span style="color:red"> => 水平展開</span><span style="color:gray"> => 完了</span>
             </div>
             <div v-else-if="issStatus==='完了'">
-              <span style="color:green">登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了</span>
+              <span style="color:blue">登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了</span>
             </div>
             <div v-else>
               登録 => 原因分析 => 是正処置 => 効果確認 => 水平展開 => 完了
@@ -103,9 +103,9 @@
             <!-- 不適合内容 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.nonconformity variant="info">不適合内容</b-btn>
+                <b-btn block href="#" v-b-toggle.nonconformity v-bind:variant="nonConformityVariant">不適合内容</b-btn>
               </b-card-header>
-              <b-collapse id="nonconformity" visible accordion="nonconformity-items" role="tabpanel">
+              <b-collapse id="nonconformity" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body class="item-content-field">
                   <div class="nonconformity-field">
                     <NonConformity
@@ -125,7 +125,7 @@
             <!-- 修正処置 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.correct variant="info">修正処置</b-btn>
+                <b-btn block href="#" v-b-toggle.correct v-bind:variant="correctVariant">修正処置</b-btn>
               </b-card-header>
               <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body class="item-content-field">
@@ -147,7 +147,7 @@
             <!-- 不適合原因 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.cause variant="info">不適合原因</b-btn>
+                <b-btn block href="#" v-b-toggle.cause v-bind:variant="causeVariant">不適合原因</b-btn>
               </b-card-header>
               <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body class="item-content-field">
@@ -169,7 +169,7 @@
             <!-- 是正処置 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.countermeasure variant="info">是正処置</b-btn>
+                <b-btn block href="#" v-b-toggle.countermeasure v-bind:variant="counterMeasureVariant">是正処置</b-btn>
               </b-card-header>
               <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body class="item-content-field">
@@ -191,7 +191,7 @@
             <!-- 効果確認 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.result variant="info">効果確認</b-btn>
+                <b-btn block href="#" v-b-toggle.result v-bind:variant="resultVariant">効果確認</b-btn>
               </b-card-header>
               <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body class="item-content-field">
@@ -213,7 +213,7 @@
             <!-- 水平展開 -->
             <b-card no-body class="mb-1">
               <b-card-header header-tag="header" class="p-1" role="tab">
-                <b-btn block href="#" v-b-toggle.rollout variant="info">水平展開</b-btn>
+                <b-btn block href="#" v-b-toggle.rollout v-bind:variant="rollOutVariant">水平展開</b-btn>
               </b-card-header>
               <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body class="item-content-field">
@@ -278,6 +278,50 @@ export default {
       this.setData()
     }
   },
+  computed: {
+    nonConformityVariant () {
+      let myStatusIdx = this.findStatusIndex(this.issDetailItems[0].conditions.currentState)
+      let currentStatusIdx = this.findStatusIndex(this.issStatus)
+      let colorVarinant = this.getColorVariant(myStatusIdx, currentStatusIdx)
+      console.log('nonConformityVariant myStatusIdx : ' + myStatusIdx + ', currentStatusIdx : ' + currentStatusIdx + ', colorVariant : ' + colorVarinant)
+      return colorVarinant
+    },
+    correctVariant () {
+      let myStatusIdx = this.findStatusIndex(this.issDetailItems[0].conditions.currentState)
+      let currentStatusIdx = this.findStatusIndex(this.issStatus)
+      let colorVarinant = this.getColorVariant(myStatusIdx, currentStatusIdx)
+      console.log('correctVariant myStatusIdx : ' + myStatusIdx + ', currentStatusIdx : ' + currentStatusIdx + ', colorVariant : ' + colorVarinant)
+      return colorVarinant
+    },
+    causeVariant () {
+      let myStatusIdx = this.findStatusIndex(this.issDetailItems[2].conditions.currentState)
+      let currentStatusIdx = this.findStatusIndex(this.issStatus)
+      let colorVarinant = this.getColorVariant(myStatusIdx, currentStatusIdx)
+      console.log('causeVariant myStatusIdx : ' + myStatusIdx + ', currentStatusIdx : ' + currentStatusIdx + ', colorVariant : ' + colorVarinant)
+      return colorVarinant
+    },
+    counterMeasureVariant () {
+      let myStatusIdx = this.findStatusIndex(this.issDetailItems[3].conditions.currentState)
+      let currentStatusIdx = this.findStatusIndex(this.issStatus)
+      let colorVarinant = this.getColorVariant(myStatusIdx, currentStatusIdx)
+      console.log('counterMeasureVariant myStatusIdx : ' + myStatusIdx + ', currentStatusIdx : ' + currentStatusIdx + ', colorVariant : ' + colorVarinant)
+      return colorVarinant
+    },
+    resultVariant () {
+      let myStatusIdx = this.findStatusIndex(this.issDetailItems[4].conditions.currentState)
+      let currentStatusIdx = this.findStatusIndex(this.issStatus)
+      let colorVarinant = this.getColorVariant(myStatusIdx, currentStatusIdx)
+      console.log('resultVariant myStatusIdx : ' + myStatusIdx + ', currentStatusIdx : ' + currentStatusIdx + ', colorVariant : ' + colorVarinant)
+      return colorVarinant
+    },
+    rollOutVariant () {
+      let myStatusIdx = this.findStatusIndex(this.issDetailItems[5].conditions.currentState)
+      let currentStatusIdx = this.findStatusIndex(this.issStatus)
+      let colorVarinant = this.getColorVariant(myStatusIdx, currentStatusIdx)
+      console.log('rollOutVariant myStatusIdx : ' + myStatusIdx + ', currentStatusIdx : ' + currentStatusIdx + ', colorVariant : ' + colorVarinant)
+      return colorVarinant
+    }
+  },
   data () {
     let statusStrings = [
       '登録',
@@ -330,18 +374,34 @@ export default {
     }
   },
   methods: {
-    findItemIndex (itemdata) {
+    getColorVariant (myidx, currentidx) {
+      let colorVariant
+      if (myidx === currentidx) {
+        colorVariant = 'danger'
+      } else if (myidx < currentidx) {
+        colorVariant = 'info'
+      } else if (currentidx === -1) {
+        colorVariant = 'default'
+      } else {
+        colorVariant = 'warning'
+      }
+      return colorVariant
+    },
+    findStatusIndex (statusName) {
+      let idx = this.statusStrings.indexOf(statusName)
+      return idx
+    },
+    findItemIndex (name) {
       let idx = this.itemdata.findIndex(item => {
-        return item.name === itemdata.name
+        return item.name === name
       })
-      console.log(idx)
       return idx
     },
     // 確定
     enter (itemdata) {
       console.log('IssuEdit.enter')
       console.log(itemdata)
-      let idx = this.findItemIndex(itemdata)
+      let idx = this.findItemIndex(itemdata.name)
       // 入力待ち -> 承認待ち に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['承認待ち']
       this.setIssueDuty()
@@ -350,7 +410,7 @@ export default {
     reject (itemdata) {
       console.log('IssuEdit.reject')
       console.log(itemdata)
-      let idx = this.findItemIndex(itemdata)
+      let idx = this.findItemIndex(itemdata.name)
       // 承認待ち -> 入力待ち に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
       this.setIssueDuty()
@@ -359,7 +419,7 @@ export default {
     accept (itemdata) {
       console.log('IssuEdit.accept')
       console.log(itemdata)
-      let idx = this.findItemIndex(itemdata)
+      let idx = this.findItemIndex(itemdata.name)
       // 承認待ち -> 完了 に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['完了']
       // ステータスを進める
@@ -373,7 +433,7 @@ export default {
     cancel (itemdata) {
       console.log('IssuEdit.cancel')
       console.log(itemdata)
-      let idx = this.findItemIndex(itemdata)
+      let idx = this.findItemIndex(itemdata.name)
       // 完了 -> 入力待ち に遷移させる
       this.itemdata[idx].state = this.issDetailInfoStatusValue['入力待ち']
       // ステータスを戻す
@@ -387,7 +447,7 @@ export default {
     contentChanged (itemdata) {
       console.log('IssuEdit.contentChanged')
       console.log(itemdata)
-      let idx = this.findItemIndex(itemdata)
+      let idx = this.findItemIndex(itemdata.name)
       // 編集内容を反映
       this.itemdata[idx].content = itemdata.content
       this.setIssueDuty()
@@ -396,7 +456,7 @@ export default {
     attach (attachment) {
       console.log('IssuEdit.attach')
       console.log(attachment)
-      let idx = this.findItemIndex(attachment)
+      let idx = this.findItemIndex(attachment.name)
       let item = {
         filename: attachment.file.name,
         filesize: parseInt(attachment.file.size / 1000) + 'kbyte',
