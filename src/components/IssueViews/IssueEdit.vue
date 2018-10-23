@@ -106,7 +106,7 @@
                 <b-btn block href="#" v-b-toggle.nonconformity v-bind:variant="nonConformityVariant">不適合内容</b-btn>
               </b-card-header>
               <b-collapse id="nonconformity" accordion="nonconformity-items" role="tabpanel">
-                <b-card-body class="item-content-field">
+                <b-card-body>
                   <div class="nonconformity-field">
                     <NonConformity
                       :itemdata="itemdata[0]"
@@ -128,7 +128,7 @@
                 <b-btn block href="#" v-b-toggle.correct v-bind:variant="correctVariant">修正処置</b-btn>
               </b-card-header>
               <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
-                <b-card-body class="item-content-field">
+                <b-card-body>
                   <div class="correct-field">
                     <Correct
                       :itemdata="itemdata[1]"
@@ -150,7 +150,7 @@
                 <b-btn block href="#" v-b-toggle.cause v-bind:variant="causeVariant">不適合原因</b-btn>
               </b-card-header>
               <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
-                <b-card-body class="item-content-field">
+                <b-card-body>
                   <div class="cause-field">
                     <Cause
                       :itemdata="itemdata[2]"
@@ -172,7 +172,7 @@
                 <b-btn block href="#" v-b-toggle.countermeasure v-bind:variant="counterMeasureVariant">是正処置</b-btn>
               </b-card-header>
               <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
-                <b-card-body class="item-content-field">
+                <b-card-body>
                   <div class="countermeasure-field">
                     <CounterMeasure
                       :itemdata="itemdata[3]"
@@ -194,7 +194,7 @@
                 <b-btn block href="#" v-b-toggle.result v-bind:variant="resultVariant">効果確認</b-btn>
               </b-card-header>
               <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
-                <b-card-body class="item-content-field">
+                <b-card-body>
                   <div class="result-field">
                     <Result
                       :itemdata="itemdata[4]"
@@ -216,7 +216,7 @@
                 <b-btn block href="#" v-b-toggle.rollout v-bind:variant="rollOutVariant">水平展開</b-btn>
               </b-card-header>
               <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
-                <b-card-body class="item-content-field">
+                <b-card-body>
                   <div class="rollout-field">
                     <RollOut
                       :itemdata="itemdata[5]"
