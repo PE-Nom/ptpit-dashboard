@@ -871,7 +871,7 @@ export default {
 .details {
   display: grid;
   padding-top: 6px;
-  grid-template-rows: 50px 420px;
+  grid-template-rows: 50px 425px;
   grid-template-columns: 30vw 30vw;
   grid-template-areas:
    "status-display-area status-display-area"
@@ -891,8 +891,5 @@ export default {
   padding-left: 6px;
   overflow: auto;
   box-shadow: 2px 2px 10px rgba(63, 63, 63, 0.2);
-}
-.item-content-field {
-  padding: 6px;
 }
 </style>
