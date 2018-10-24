@@ -108,7 +108,7 @@
               <b-collapse id="nonconformity" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="nonconformity-field">
-                    <NonConformity
+                    <NonConformityItem
                       :itemdata="itemdata[0]"
                       :disabled="stateNonconformity"
                       @enter="enter"
@@ -117,7 +117,7 @@
                       @cancel="cancel"
                       @attach="attach"
                       @contentChanged="contentChanged">
-                    </NonConformity>
+                    </NonConformityItem>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -130,7 +130,7 @@
               <b-collapse id="correct" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="correct-field">
-                    <Correct
+                    <NonConformityItem
                       :itemdata="itemdata[1]"
                       :disabled="stateCorrect"
                       @enter="enter"
@@ -139,7 +139,7 @@
                       @cancel="cancel"
                       @attach="attach"
                       @contentChanged="contentChanged">
-                    </Correct>
+                    </NonConformityItem>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -152,7 +152,7 @@
               <b-collapse id="cause" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="cause-field">
-                    <Cause
+                    <NonConformityItem
                       :itemdata="itemdata[2]"
                       :disabled="stateCause"
                       @enter="enter"
@@ -161,7 +161,7 @@
                       @cancel="cancel"
                       @attach="attach"
                       @contentChanged="contentChanged">
-                    </Cause>
+                    </NonConformityItem>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -174,7 +174,7 @@
               <b-collapse id="countermeasure" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="countermeasure-field">
-                    <CounterMeasure
+                    <NonConformityItem
                       :itemdata="itemdata[3]"
                       :disabled="stateCounterMeasure"
                       @enter="enter"
@@ -183,7 +183,7 @@
                       @cancel="cancel"
                       @attach="attach"
                       @contentChanged="contentChanged">
-                    </CounterMeasure>
+                    </NonConformityItem>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -196,7 +196,7 @@
               <b-collapse id="result" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="result-field">
-                    <Result
+                    <NonConformityItem
                       :itemdata="itemdata[4]"
                       :disabled="stateResult"
                       @enter="enter"
@@ -205,7 +205,7 @@
                       @cancel="cancel"
                       @attach="attach"
                       @contentChanged="contentChanged">
-                    </Result>
+                    </NonConformityItem>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -218,7 +218,7 @@
               <b-collapse id="rollout" accordion="nonconformity-items" role="tabpanel">
                 <b-card-body>
                   <div class="rollout-field">
-                    <RollOut
+                    <NonConformityItem
                       :itemdata="itemdata[5]"
                       :disabled="stateRollOut"
                       @enter="enter"
@@ -227,7 +227,7 @@
                       @cancel="cancel"
                       @attach="attach"
                       @contentChanged="contentChanged">
-                    </RollOut>
+                    </NonConformityItem>
                   </div>
                 </b-card-body>
               </b-collapse>
@@ -246,22 +246,12 @@ import util from '../../models/util.js'
 import fileUploader from '../../models/fileUploader.js'
 import Indicator from '../Indicator.vue'
 import DateSelector from '../DateSelector.vue'
-import NonConformity from './NonConformity'
-import Correct from './Correct.vue'
-import Cause from './Cause.vue'
-import CounterMeasure from './CounterMeasure.vue'
-import Result from './Result.vue'
-import RollOut from './RollOut.vue'
+import NonConformityItem from './NonConformityItem'
 
 export default {
   name: 'IssueEdit',
   components: {
-    NonConformity,
-    Correct,
-    Cause,
-    CounterMeasure,
-    Result,
-    RollOut,
+    NonConformityItem,
     Indicator,
     DateSelector
   },
