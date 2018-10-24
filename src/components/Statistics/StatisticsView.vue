@@ -2,11 +2,11 @@
   <div class="statistics">
     <div class="chart pie">
       <h3>円グラフを描画する</h3>
-      <PieChart :data="pieChartData" :options="options"></PieChart>
+      <PieChart :data="pieChartData" :options="options" :style="styleForPieChart"></PieChart>
     </div>
     <div class="chart bar">
       <h3>棒グラフを描画する</h3>
-      <BarChart :data="pieChartData" :options="options"></BarChart>
+      <BarChart :data="pieChartData" :options="options" :styles="styleForBarChart"></BarChart>
     </div>
   </div>
 </template>
@@ -45,9 +45,32 @@ export default {
         text: '藩と人口'
       }
     }
+    // Style
+    let styleForBarChart = {
+      'position': 'absolute',
+      'width': '20vw',
+      'height': '250px',
+      'top': 0,
+      'bottom': 0,
+      'left': 0,
+      'right': 0,
+      'margin': 'auto'
+    }
+    let styleForPieChart = {
+      'position': 'absolute',
+      'width': '20vw',
+      'height': '250px',
+      'top': 0,
+      'bottom': 0,
+      'left': 0,
+      'right': 0,
+      'margin': 'auto'
+    }
     return {
       pieChartData: pieChartData,
-      options: options
+      options: options,
+      styleForBarChart: styleForBarChart,
+      styleForPieChart: styleForPieChart
     }
   }
 }
@@ -69,9 +92,10 @@ export default {
     "barchart-area piechart-area";
 }
 .chart {
+  position: relative;
   width: 80%;
   height: 80%;
-  margin: auto
+  margin: auto;
 }
 .pie {
   grid-area: piechart-area;
