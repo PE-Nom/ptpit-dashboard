@@ -10,18 +10,23 @@ export default {
     password: config.Password
   },
   configure (user) {
-    if (!this.isConfigured()) {
-      this.rmc = axios.create({
-        baseURL: URLjoin(config.BaseURL, '/redmine'),
-        auth: {
-          // username: this.user.username,
-          // password: this.user.password
-          username: user.username,
-          password: user.password
-        },
-        json: true
-      })
-      this.configured = true
+    if (user) {
+      if (!this.isConfigured()) {
+        this.rmc = axios.create({
+          baseURL: URLjoin(config.BaseURL, '/redmine'),
+          auth: {
+            // username: this.user.username,
+            // password: this.user.password
+            username: user.username,
+            password: user.password
+          },
+          json: true
+        })
+        this.configured = true
+      }
+    } else {
+      this.rmc = null
+      this.configured = false
     }
   },
   isConfigured () {

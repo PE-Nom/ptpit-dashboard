@@ -106,11 +106,11 @@ export default {
   },
   created () {
     console.log('app created')
-    let user = {
-      username: 'nc-manager-001',
-      password: 'nc-manager-001'
-    }
-    this.loginClose(user)
+    // let user = {
+    //   username: 'nc-manager-001',
+    //   password: 'nc-manager-001'
+    // }
+    // this.loginClose(user)
   }
 }
 </script>
