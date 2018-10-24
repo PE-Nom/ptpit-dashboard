@@ -24,29 +24,6 @@ export default {
     BarChart
   },
   data () {
-    // グラフ描画用データ
-    let pieChartData = {
-      // ラベル
-      labels: ['天領', '薩摩', '長州', '土佐'],
-      // データ詳細
-      datasets: [{
-        label: '藩と人口',
-        data: [13740000, 9072000, 7150000, 6148000],
-        backgroundColor: [
-          'rgba(255, 100, 130, 0.2)',
-          'rgba(100, 130, 255, 0.2)',
-          'rgba(130, 255, 100, 0.2)',
-          'rgba(230, 210, 85, 0.2)'
-        ]
-      }]
-    }
-    // グラフオプション
-    let options = {
-      title: {
-        display: true,
-        text: '藩と人口'
-      }
-    }
     // Style
     let styleForBarChart = {
       'position': 'absolute',
@@ -82,10 +59,10 @@ export default {
       'rgba( 85, 210, 230, 0.2)'
     ]
     return {
-      pieChartData: pieChartData,
-      pieChartOptions: options,
-      barChartData: pieChartData,
-      barChartOptions: options,
+      pieChartData: '',
+      pieChartOptions: '',
+      barChartData: '',
+      barChartOptions: '',
       styleForBarChart: styleForBarChart,
       styleForPieChart: styleForPieChart,
       bgColors: bgColors
