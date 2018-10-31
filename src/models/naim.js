@@ -107,11 +107,13 @@ export default {
   },
   getTrackerIdByName (name) {
     let id = null
-    this.trackers.forEach(tracker => {
-      if (tracker.name === name) {
-        id = tracker.id
-      }
-    })
+    if (this.trackers) {
+      this.trackers.forEach(tracker => {
+        if (tracker.name === name) {
+          id = tracker.id
+        }
+      })
+    }
     return id
   },
   // ------------------
@@ -299,33 +301,35 @@ export default {
     }
   },
   async retrieveMembershipOfProjects () {
-    try {
-      this.memberships = []
-      let prjs = []
-      for (let prj of this.projects) {
-        await redmine.membershipOfProject(prj.id, res => {
-          // console.log('==== Membership of project @ naim ====')
-          // console.log(prj)
-          for (let membership of res.data.memberships) {
-            this.memberships.push(membership)
-            if (membership.user.id === this.userId) {
-              // console.log('find userId')
-              if (prj.parent !== undefined) {
-                this.rootPrj = prj.parent
-                let availablePrj = Object.assign({}, prj)
-                Object.assign(availablePrj, {roles: membership.roles})
-                prjs.push(availablePrj)
+    if (redmine.isConfigured()) {
+      try {
+        this.memberships = []
+        let prjs = []
+        for (let prj of this.projects) {
+          await redmine.membershipOfProject(prj.id, res => {
+            // console.log('==== Membership of project @ naim ====')
+            // console.log(prj)
+            for (let membership of res.data.memberships) {
+              this.memberships.push(membership)
+              if (membership.user.id === this.userId) {
+                // console.log('find userId')
+                if (prj.parent !== undefined) {
+                  this.rootPrj = prj.parent
+                  let availablePrj = Object.assign({}, prj)
+                  Object.assign(availablePrj, {roles: membership.roles})
+                  prjs.push(availablePrj)
+                }
               }
             }
-          }
-        })
+          })
+        }
+        // console.log(this.memberships)
+        this.availablePrjs = prjs
+        // console.log(this.availablePrjs)
+      } catch (err) {
+        console.log('==== Membership of project @ naim ====')
+        console.log(err)
       }
-      // console.log(this.memberships)
-      this.availablePrjs = prjs
-      // console.log(this.availablePrjs)
-    } catch (err) {
-      console.log('==== Membership of project @ naim ====')
-      console.log(err)
     }
   },
   getParentProject () {
@@ -422,25 +426,27 @@ export default {
   // ------------------
   // columns: ['id', 'トラッカー', 'プロジェクト', '題名', '優先度', 'ステータス', '進捗率', '作成者', '担当者', '開始日', '期日', '更新日'],
   async retrieveIssues (trackerId) {
-    try {
-      console.log('### retrieveIssues ###')
-      // Issues List
-      this.issues = []
-      console.log(' call redmine.issues')
-      if (redmine.isConfigured()) {
-        await redmine.issues(trackerId, res => {
-          console.log('==== Issues @ naim ====')
-          res.data.issues.forEach(el => {
-            this.issues.push(el)
+    if (redmine.isConfigured()) {
+      try {
+        console.log('### retrieveIssues ###')
+        // Issues List
+        this.issues = []
+        console.log(' call redmine.issues')
+        if (redmine.isConfigured()) {
+          await redmine.issues(trackerId, res => {
+            console.log('==== Issues @ naim ====')
+            res.data.issues.forEach(el => {
+              this.issues.push(el)
+            })
           })
-        })
+        }
+        console.log(this.issues)
+      } catch (err) {
+        console.log('err @ retrieveIssues')
+        console.log(err)
+        alert(err)
+        throw err
       }
-      console.log(this.issues)
-    } catch (err) {
-      console.log('err @ retrieveIssues')
-      console.log(err)
-      alert(err)
-      throw err
     }
   },
   getIssues: function () {

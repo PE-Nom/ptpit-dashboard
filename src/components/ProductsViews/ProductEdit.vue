@@ -513,7 +513,10 @@ export default {
   },
   created () {
     console.log('ProductEdit created')
-    this.customerOptions = naim.getCustomeFileds('顧客情報')
+    let options = naim.getCustomeFileds('顧客情報')
+    if (options) {
+      this.customerOptions = options
+    }
     console.log(this.customerOptions)
   },
   mounted () {
