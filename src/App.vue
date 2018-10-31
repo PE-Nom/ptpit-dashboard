@@ -7,7 +7,7 @@
       <slide>
         <a  @click='menuselected("issues")'>
           <i class="fa fa-fw fa-star-o"></i>
-          <span>指摘一覧</span>
+          <span>不適合一覧</span>
         </a>
         <a @click='menuselected("products")'>
           <i class="fa fa-fw fa-bell-o"></i>

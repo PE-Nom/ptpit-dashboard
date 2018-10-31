@@ -20,13 +20,13 @@
       <div class="item-field">
         <div class="items">
           <!-- 指摘番号 -->
-          <label class="grid-item item-label issue-id-label">指摘番号</label>
+          <label class="grid-item item-label issue-id-label">不適合番号</label>
           <input type="text"
             class="grid-item item-form issue-id-form"
             v-model="issueId"
             disabled >
           <!-- 製品名 -->
-          <label class="grid-item item-label issue-name-label">製品名</label>
+          <label class="grid-item item-label issue-name-label">対象製品名</label>
             <b-form-select
               class="grid-item item-form issue-name-form"
               v-model="product"
@@ -35,7 +35,7 @@
               @change="productChanged">
             </b-form-select>
           <!-- 指摘件名 -->
-          <label class="grid-item item-label issue-subject-label">指摘件名</label>
+          <label class="grid-item item-label issue-subject-label">不適合件名</label>
           <input type="text"
             class="grid-item item-form issue-subject-form"
             placeholder="指摘件名"
