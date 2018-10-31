@@ -2,14 +2,13 @@
   <div class="banner-title">
     <div>
       <div>
-      <img src="../assets/safetyfirst.png" alt="安全第一">
+      <img src="../assets/QualityAssuarance.png" alt="品質保証">
       </div>
       <br>
       <div>
         <h1>{{ msg }}</h1>
         <br>
         <p class="explanation">{{system}}</p>
-        <p class="explanation">{{subname}}</p>
         <p class="explanation">{{corporate}}</p>
       </div>
     </div>
@@ -21,9 +20,8 @@ export default {
   name: 'Home',
   data () {
     return {
-      msg: 'ピットさん',
-      system: 'Safety And Nonconforming',
-      subname: 'Management System',
+      msg: 'ピットさん NM',
+      system: 'Nonconforming Management System',
       corporate: 'by Pitarpit Co.,Ltd.'
     }
   },
