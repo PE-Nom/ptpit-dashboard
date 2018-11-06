@@ -73,7 +73,9 @@
         <div class="table-row header">
           <div class="wrapper attributes header">
             <div v-for="(val, idx) in attachmentsInfoColumns" v-bind:key=idx :class="[val]">
-              {{ val }}
+              <span v-if="val==='id'">番号</span>
+              <span v-else-if="val==='filename'">ファイル名</span>
+              <span v-else>概要</span>
             </div>
           </div>
         </div>
